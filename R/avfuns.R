@@ -1,10 +1,9 @@
 ## https://dcl-wrangle.stanford.edu/rvest.html
-library(tidyverse)
-library(lubridate)
-library(rvest)
-library(maps)
-library(countrycode) ## match cities to countries
-library(zoo)
+library("tidyverse")
+library("rvest")
+library("maps")
+library("countrycode") ## match cities to countries
+library("zoo")
 
 
 base_url="https://avherald.com/"
