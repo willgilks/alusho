@@ -292,7 +292,7 @@ mydays=paste0(" ",gsub("^1th","1st",
                                                 gsub("31th","31st",
                                                      paste0(as.character(1:31),"th"))))))))," ")
 
-
+# test
 
 ## world cities
 data(world.cities)
