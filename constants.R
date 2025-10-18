@@ -1,5 +1,180 @@
 
 
+## constants for string pattern matching when summarising events.
+{
+  times1=list(
+    approach=c("approach","descent","go around","initial climb","landed","on landing","hard landing",
+               "touch down","touchdown","touched down","roll out","rollout"),
+    on_ground=c("apron","at stand","ground worker","push back","taxi","line up","turn off","on runway","runway excursion"),
+    departure=c("departure","departed","climb out","takeoff","take off","could not retract landing gear"),
+    enroute=c("in flight","midair","enroute"))
+  
+  animals1=list(
+    bird=c("birds","bird","goose","geese"),
+    other=c("dog","coyote"),
+  )
+  
+  
+  ac_parts1=list(
+    electric=c("electric","electronic"),
+    navigation=c("nav","navigation"),
+    toilet=c("lavatory","toilet"),
+    FMS=c("FMS","FMSs"),
+    GPS=c("GPS","EGPWS","GPWS"),
+    engine=c("engine","propeller"),
+    oil=c("^oil"," oil"),
+    pressure=c("pressurization","pressure"))
+  
+  ac_parts2=c(
+    "hydraulic", "instrument",
+    "MCP speed selector",
+    "flight control",
+    "pneumatic",
+    "communication",
+    "configuration",
+    "aircraft",
+    "airframe",
+    "air conditioning",
+    "altitude sensor",
+    "APU",
+    "autopilot", 
+    "battery",
+    "bleed",
+    "brake",
+    "cabin",
+    "charger",
+    "cockpit",
+    "cargo",
+    "door", 
+    "elevator",
+    "computer",
+    "flight deck",
+    "flap",
+    "fuel", 
+    "galley",
+    "gear",
+    "tyre","wheel",
+    "on board",
+    "oxygen","panel",
+    "phone",
+    "power bank",
+    "radar altimeter",
+    "RAT","radio","radome",
+    "slat","spoiler","stairs",
+    "tail",
+    "weather radar",
+    "rudder",
+    "slat",
+    "water system",
+    "windshield","window","wing","wing tip")
+  
+  
+  
+  
+  people1=list(
+    pilot=c("captain","copilot","pilot","^pilot","first officer"),
+    cabin_crew=c("flight attendant","attendant","cabin crew"),
+    atc=c("ATC|tower"),
+    ground_worker=c("ground worker"),
+    passenger=c("passenger","people"))
+  
+  
+  
+  events1=list(
+    activation=c("activation","activates"),
+    alert=c("alert","alarm"),
+    decsent=c("descent","descend"),
+    fire=c("flames","fire"),
+    injury=c("injuries","injures","injured"),
+    noise=c("noisy","noise"),
+    overrun=c("overran","overrun"),
+    smell=c("odour","smell"),
+    return=c("return"),
+    divert=c("divert","diversion"))
+  
+  events2=list(
+    "asymmetry",
+    "beeping",
+    "bang",
+    "bird",
+    "blew",
+    "burst",
+    "breaks",
+    "burning",
+    "clogged",
+    "collapse",
+    "collision",
+    "contact",
+    "could not retract",
+    "cracked","crashed",
+    "damage","detached","deployed",
+    "died",
+    "disabled","disagree",
+    "discrepancy",
+    "dislodged",
+    "dropped",
+    "emergency","error","evacuation","excursion",
+    "exposed",
+    "failure","fault","fire","flamed out",
+    "generator",
+    "go around",
+    "fell",
+    "flames",
+    "fumes",
+    "hail strike",
+    "heaviness",
+    " hit",
+    "impacted","incapacitated","incursion","indication",
+    "issue",
+    "ill",
+    "jammed",
+    "killed",
+    "leak",
+    "lightning",
+    "locked",
+    "loss of",
+    "loss of separation",
+    "lost power",
+    "lost height",
+    "malfunction",
+    "near collision",
+    "opened",
+    "overflew","overheat",
+    "pressure","pressurize",
+    "problem","rejected","returned",
+    "separated","shot","shut down","smoke","stall",
+    "stick shaker",
+    "TCAS",
+    "touched down short of runway",
+    "trouble",
+    "turbulence",
+    "thermal runaway",
+    "scrape",
+    "sparks",
+    "strike",
+    "veered off","vibrations",
+    "wake turbulence",
+    "warning")
+  
+  adjectives1=list(instability=c("stabilisation","unstable"))
+  
+  adjectives2=list(
+    "hard","incorrect","insufficient",
+    "unidentified","unreliable","unsafe",
+    "unusual","wrong")
+  
+  
+  ## ac_condition
+  ac_condition1=list(
+    ice=" ice", altitude=c("altitude","height"),
+    speed=c("airspeed","speed"),
+    attitude="attitude",
+    angle="angle",thrust="thurst")
+}
+
+
+
+
 ## levels of aircraft types.
 AIRCRAFT_SEARCH_STRINGS=list(
   
