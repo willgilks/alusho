@@ -22,6 +22,7 @@ loop_dates=seq.Date(from=base::as.Date(earliest_overall_date),to=Sys.Date(),by =
 
 
 deduped_data=raw_data |> 
+  mutate(orig_text=gsub("  "," ",orig_text)) |> 
   group_by(orig_text) |> 
   filter(reporting_date==min(reporting_date)) |> 
   ungroup()
@@ -90,6 +91,7 @@ make_ac_type_lookup=function(ac_type_input_list=AIRCRAFT_SEARCH_STRINGS) {
   return(output_df)
 }
 
+
 ## Build ac lookup
 ac_type_lookup_table=make_ac_type_lookup(ac_type_input_list=AIRCRAFT_SEARCH_STRINGS)
 
@@ -136,9 +138,244 @@ data_with_ac_info=deduped_data |>
   mutate(match=purrr::map(orig_text,~extract_aircraft(.x,lookup_tbl=ac_type_lookup_table))) |>
   unnest(match)
 
+# write_csv(data_with_ac_info,"~/Desktop/data_with_ac_info.csv")
+
+# try to extract airline
+# keep all the text before the ac reported name, the remove all the text up until and including 'and'.
+# remove any animals.?
+# all the results with only one occurence aren't trustworthy.
+# instead assume that all the others are, unless n=1 is called airlines or something.
+# then use these to grep those which are missing where n=1.
+# then deal with typo sexceptions, with/out airlines
+pig=data_with_ac_info |> 
+  select(orig_text,reported_ac_name,num_aircraft) |> 
+  rowwise() |> 
+  mutate(icol=gsub(paste0(reported_ac_name[1],".*"),"",orig_text)) |> 
+  ungroup() |> 
+  # mutate(icol=if_else(is.na(reported_ac_name),gsub(" .*","",icol),icol)) |> 
+  # mutate(icol=trimws(icol)) |> 
+  ungroup()
+pig
+pig |> 
+  group_by(icol) |> 
+  summarise(nr=n(),.groups='drop')|> view()
 
 
-world_cities=tibble(maps::world.cities)
+
+## 1. Load data
+# input_df=read_csv("data_with_ac_info.csv")
+
+## 2. Define airline extraction function
+# extract_airline=function(input_df) {
+#   
+#   out_df=input_df|>mutate(
+#     airline_candidate=if_else(
+#       !is.na(reported_ac_name)&
+#         str_detect(orig_text,reported_ac_name),
+#       str_split_fixed(orig_text,regex(reported_ac_name,ignore_case=TRUE),2)[,1],orig_text)|>
+#       str_remove(regex(".*?\\band\\b",ignore_case=TRUE))|>
+#       str_replace_all("[^A-Za-z0-9\\s]","")|>
+#       str_squish())
+#   
+#   out_df
+# }
+# 
+# extracted_airline_data=extract_airline(input_df=data_with_ac_info)
+# 
+# ## 3. Count occurrences
+# counts_df=extracted_airline_data|>count(airline_candidate,name="n",sort=TRUE)
+# 
+# ## 4. Identify trustworthy vs untrustworthy
+# trustworthy_vec=counts_df|>
+#   filter(n>1|str_detect(airline_candidate,"Airline"))|>
+#   pull(airline_candidate)
+# 
+# untrustworthy_vec=counts_df|>
+#   filter(n==1&!str_detect(airline_candidate,"Airline"))|>
+#   pull(airline_candidate)
+# 
+# ## 5. Impute missing/untrustworthy airlines
+# pattern=paste0("\\b(",paste0(
+#   str_replace_all(trustworthy_vec,"([.|()\\[\\]{}+*?^$\\\\])","\\\\\\1"),
+#   collapse="|"),")( airlines?| airways?)?\\b")
+# 
+# imputed_df=extracted_airline_data|>mutate(
+#   airline_final=case_when(
+#     !is.na(airline_candidate)&!airline_candidate%in%untrustworthy_vec~airline_candidate,
+#     TRUE~str_extract(orig_text,pattern)))
+# 
+# 
+# ## 6. Normalize airline names
+# final_df=imputed_df|>mutate(
+#   airline_final=str_remove_all(airline_final,"\\b(airlines?|airways?)\\b")|>
+#     str_squish())
+
+extract_and_impute_airlines=function(input_df) {
+  
+  ## Step 0: Trim orig_text to stop at 'at', 'near', 'between', etc.
+  cleaned_df=input_df|>mutate(
+    orig_text=str_remove(orig_text,
+                         regex("\\b(at|near|between|over|overhead|enroute)\\b.*",
+                               ignore_case=TRUE))
+  )
+  
+  ## Step 1: Extract airline candidate
+  extracted_df=cleaned_df|>mutate(
+    airline_candidate=if_else(
+      !is.na(reported_ac_name)&
+        str_detect(orig_text,reported_ac_name),
+      str_split_fixed(orig_text,regex(reported_ac_name,ignore_case=TRUE),2)[,1],
+      orig_text
+    )|>
+      str_remove(regex(".*?\\band\\b",ignore_case=TRUE))|>
+      str_replace_all("[^A-Za-z0-9\\s]","")|>
+      str_squish()
+  )
+  
+  ## Step 2: Count occurrences
+  counts_df=extracted_df|>count(airline_candidate,name="n",sort=TRUE)
+  
+  ## Step 3: Identify trustworthy vs untrustworthy
+  trustworthy_vec=counts_df|>
+    filter(n>1|str_detect(airline_candidate,"Airline"))|>
+    pull(airline_candidate)
+  
+  untrustworthy_vec=counts_df|>
+    filter(n==1&!str_detect(airline_candidate,"Airline"))|>
+    pull(airline_candidate)
+  
+  ## Step 4: Impute missing/untrustworthy airlines
+  pattern=paste0("\\b(",paste0(
+    str_replace_all(trustworthy_vec,"([.|()\\[\\]{}+*?^$\\\\])","\\\\\\1"),
+    collapse="|"),")( airlines?| airways?)?\\b")
+  
+  imputed_df=extracted_df|>mutate(
+    airline_final=case_when(
+      !is.na(airline_candidate)&!airline_candidate%in%untrustworthy_vec~airline_candidate,
+      TRUE~str_extract(orig_text,pattern)
+    )
+  )
+  
+  ## Step 5: Normalize airline names and limit length
+  normalized_df=imputed_df|>mutate(
+    airline_final=str_squish(airline_final),
+    airline_final=if_else(nchar(airline_final)>30,NA_character_,airline_final)
+  )
+  
+  ## Step 6: Recount and mark low-frequency airlines as NA
+  freq_df=normalized_df|>count(airline_final,name="n_airline",sort=TRUE)
+  filtered_df=normalized_df|>left_join(freq_df,by="airline_final")|>
+    mutate(airline_final=if_else(
+      n_airline<2&!str_detect(airline_final,"Airline"),
+      NA_character_,
+      airline_final
+    ))
+  
+  ## Step 7: Build dictionary of viable airlines
+  viable_dict=filtered_df|>filter(!is.na(airline_final))|>
+    distinct(airline_final)|>
+    pull(airline_final)
+  
+  ## Step 8: Detect all dictionary airline names in orig_text
+  joined_pattern=paste0("\\b(",paste0(
+    str_replace_all(viable_dict,"([.|()\\[\\]{}+*?^$\\\\])","\\\\\\1"),
+    collapse="|"),")\\b")
+  
+  final_df=filtered_df|>mutate(
+    new_airline_final=str_extract_all(orig_text,joined_pattern),
+    new_airline_final=sapply(new_airline_final,function(x)
+      if(length(x)==0) NA_character_ else paste(unique(x),collapse=", "))
+  )
+  
+  final_df
+}
+
+
+
+final_airline_df=extract_and_impute_airlines(data_with_ac_info)
+
+
+airlines_dat_filtered=final_airline_df |> 
+  filter(new_airline_final!="NA",!is.na(new_airline_final)) |> 
+  filter(!grepl(",",new_airline_final)) |> 
+  # filter(n_airline>1|grepl("airlines|aircargo",new_airline_final,ignore.case = T)) |> 
+  ungroup()
+airline_names_filtered=sort(unique(airlines_dat_filtered$new_airline_final))
+
+
+grouped_texts=split(airline_names_filtered,ceiling(seq_along(airline_names_filtered)/100))|>
+  lapply(paste0,collapse="','")
+grouped_texts
+## If you want a character vector instead of a list
+grouped_texts=unlist(grouped_texts,use.names=FALSE)
+
+
+
+
+# ## 7. Summary
+# filled_ratio=mean(!is.na(final_df$airline_final))
+# num_unique=n_distinct(final_df$airline_final,na.rm=TRUE)
+# top_airlines=final_df|>count(airline_final,sort=TRUE)|>slice_head(n=15)
+
+# print(filled_ratio)
+# print(num_unique)
+# print(top_airlines)
+
+library("stringdist")
+
+## 1. Filter valid names (no NA, no comma)
+valid_df=final_airline_df|>
+  filter(!is.na(new_airline_final),!str_detect(new_airline_final,","))|>
+  distinct(new_airline_final)|>
+  mutate(new_airline_final=str_squish(new_airline_final))
+
+sort(unique(valid_df$new_airline_final))
+## 2. Vector of names
+airline_names=sort(unique(valid_df$new_airline_final))
+
+
+grouped_texts=split(airline_names,ceiling(seq_along(airline_names)/100))|>
+  lapply(paste0,collapse="','")
+grouped_texts
+## If you want a character vector instead of a list
+grouped_texts=unlist(grouped_texts,use.names=FALSE)
+
+
+pig=paste0(sort(unique(valid_df$new_airline_final)),collapse='|')
+pig
+## 3. Compute pairwise Jaro–Winkler distances
+dist_matrix=stringdistmatrix(airline_names,airline_names,method="jw")
+
+## 4. Define threshold for similarity
+threshold=0.15
+
+## 5. Build grouped list safely
+airline_groups=map(seq_along(airline_names),\(i){
+  similar_idx=which(dist_matrix[i,]<=threshold)
+  sort(unique(airline_names[similar_idx]))
+})|>set_names(airline_names)
+
+## 6. Remove redundant groups (duplicate sets)
+unique_groups=airline_groups|>unique()
+
+## 7. Optionally, collapse each group to a named list
+##    where the consensus is the shortest name in the group
+consensus_groups=map(unique_groups,\(grp){
+  consensus=grp[which.min(nchar(grp))]
+  setNames(list(grp),consensus)
+})|>reduce(c)
+
+## Result: consensus_groups is a named list
+length(consensus_groups)
+str(consensus_groups[1:5])
+
+
+
+
+
+
+
+world_cities=tibble(maps::world.cities) 
 
 world_cities_filtered=world_cities |> 
   group_by(name) |> 
@@ -333,25 +570,8 @@ final_missing_locs=data_with_locs_and_geos |>
 
 
 
-deduped_data |> 
-  mutate(mo=extract_month_numbers(orig_text))
 
 
-
-extract_day_numbers <- function(x) {
-  # match 1–2 digit numbers, possibly followed by st/nd/rd/th
-  pattern <- "\\b(\\d{1,2})(?:st|nd|rd|th)?\\b"
-  
-  # extract first match per string
-  match <- stringr::str_extract(x, regex(pattern, ignore_case = TRUE))
-  
-  # remove any ordinal suffix and convert to integer
-  as.integer(gsub("(st|nd|rd|th)$", "", match, ignore.case = TRUE))
-}
-
-
-deduped_data |> 
-  mutate(day=extract_day_numbers(orig_text))
 
 
 extract_dates=function(x) {
