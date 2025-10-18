@@ -6,8 +6,8 @@ library("countrycode") ## match cities to countries
 
 
 
-## av herald dat scrape and analysis
-splitwords=list(loc=" LOCS_PLIT ",date=" DATE_SPLIT ",comma="COMMA_SPLIT ")
+
+## dat scrape and analysis
 end_of_first_period="2022-07-15"
 start_of_second_period="2022-08-15"
 end_of_second_period="2023-08-01"
@@ -15,32 +15,19 @@ earliest_overall_date="1994-03-01"
 earliest_test_date=Sys.Date()-365
 
 
-
-
-
-
 ## pull data ####
 
 loop_dates=seq.Date(from=base::as.Date(earliest_overall_date),to=Sys.Date(),by = "1 year")
 # loop_dates=seq.Date(from=base::as.Date(Sys.Date()-365),to=Sys.Date(),by = "1 year")
-# loop_dates
 
 
-
-
-pig=raw_data
-
-
-dedupe_pig=pig |> 
-  # mutate(reporting_date=as.numeric(reporting_date)) |> 
-  group_by(orig_text) |> filter(reporting_date==min(reporting_date)) |> 
+deduped_data=raw_data |> 
+  group_by(orig_text) |> 
+  filter(reporting_date==min(reporting_date)) |> 
   ungroup()
 
 
-
-dedupe_pig
-
-
+## for event classifcation
 make_label_column=function(input_df,new_column_name,str_list1,str_list2){
   
   if (!is.null(str_list2)){
@@ -66,116 +53,435 @@ make_label_column=function(input_df,new_column_name,str_list1,str_list2){
 
 
 
-ac_types2=sort(unique(c(
-  "501", # citatation
-  "A3ST", ## airbus beluga
-  "A124","A140","A148","A20n","A20N","A21N","A225","A300","A306","A30B","A310","A312",
-  "A313","A318","A319","A320","A321","A322","A330","A332","A333","A337","A339","A340",
-  "A342","A343","A345","A346","A359","A35k","A35K","A380","A388","A748","Airbus A306","Airbus,A320",
-  "Airbus A321","Airbus A330","Airbus A332","Airbus A337","Airbus A346","Airbus A359","Airbus A380","AN-12","AN-140","AN-32","AN12","AN24",
-  "AN26","AN28","AN30","AN32","AN38","AN74",
-  "ATP", ## british aerospace
-  ## ATR
-  "AT42",
-  "AT43",
-  "AT45",
-  "AT72",
-  "AT76",
-  "ATR42","ATR72",
-  "BCS1", ## airbus a220-100
-  "BCS2", ## airbus a220-200
-  "BCS3", ## airbus a220-300
-  "B190","B461",
-  "B462","B463",
-  "B703","B707","B712","B717","B721","B722","B723","B727","B732","B733",
-  "B734","B735","B736","B737","B738",
-  "738",
-  "B73W",
-  "B38M",
-  "B39M", ## 737 max 9.
-  "B73H", ## 737 737-9 with winglets
-  "B78X",
-  "BLCF", ## boeing dreamlifter
-  "B72F", ## boeing 727 frieght
-  "B739","B73G","B741","B742","B743","B744","B744F","B747","B74S",
-  "747",
-  "B748","B752","B753","B757","B762","B763","B764","B767","B772","B773","B777","B77W","B788",
-  "B789","BAe 146","BAe 146-200","BAe146","Boeing 737","Boeing 737-600","Boeing 752","Boeing 767",
-  "763",
-  "Boeing 767-300","Boeing 777","Boeing 787",
-  "B77F",
-  "BE99", ## beechcraft
-  "BN2P", ## Britten-Norman
-  "TRIS",  ## Britten-Norman
-  "Buffalo C46",
-  "Caravan", ## cessna
-  "CVLT", ## convair
-  "CVLP", ## convair
-  "CL-600", ## bombadier challenger
-  "C123",
-  "C130","C208GC","C212","C402","C421","C525","CL600","CRJ-100","CRJ-200","CRJ1","CRJ100","CRJ2",
-  "CRJ",
-  "CRJ200","CRJ4","CRJ7","CRJ700","CRJ9","CRJ900","Dash8","DC-10","DC-9","DC10","DC3","DC3T",
-  "DC4","DC6","DC8","DC85","DC86","DC87","DC9","DC91","DC93","DC94","DC95","DC9E",
-  "D228", ## dornier
-  "D328",
-  "Do328",
-  "DH82",# de Havilland Canada
-  "DH8A","DH8B","DH8C","DH8D","DHC6","DHC7","Dornier 328","E110","E120","E135","E140","E145",
-  "EMB145",
-  "EMB120",
-  "EMB170",
-  "EMB195",
-  "E170","E175","E190","E195","E290","E295","Embraer 145","ERJ-190","ERJ135","ERJ145","F100","F27",
-  "F28","F50","F70","Fokker 100","Fokker 27","Fokker 50","Fokker 70","IL18","IL62","IL76","IL86","IL96",
-  "Jetstream 32","JS31","JS32","JS41",
-  "J328", ## dornier
-  "J31",
-  "J32",
-  "L188", ## lockheed
-  "L101", ## Lockheed,
-  "L410", ## Let
-  "MA60", ## Xi'an
-  "MD-10","MD-80","MD-82","MD-83","MD-87","MD-88","MD10","MD11",
-  "MD80","MD81","MD82","MD83","MD87","MD88","MD90",
-  "Q400",
-  "RJ100","RJ1H","RJ70","RJ85",
-  "Saab 340",
-  "SF34", # saab
-  "SB20", ## saab
-  "SH33","SH36","Shorts 360","SW4","SU95","Superjet-100",
-  "T134","Tu-134","TU154M","TU-154","T154","TU-154M","TU-154","T204","T-204","T214",
-  "Vulcan",
-  "Twin Otter", # de Havilland Canada
-  "YK40","YK42")))
+
+## Flatten ac_types1
+flatten_lookup=function(input_list) {
+  
+  map_dfr(names(input_list), function(manuf) {
+    families=input_list[[manuf]]
+    
+    map_dfr(names(families), function(fam_name) {
+      fam=families[[fam_name]]
+      
+      map_dfr(names(fam), function(ac_code) {
+        ac=fam[[ac_code]]
+        tibble(
+          manufacturer=manuf,
+          ac_family=fam_name,
+          standardised_ac_name=ac_code,
+          reported_ac_name=unlist(ac))
+      })
+    })
+  })
+}
+
+
+make_ac_type_lookup=function(ac_type_input_list=AIRCRAFT_SEARCH_STRINGS) {
+  
+  pancake=flatten_lookup(ac_type_input_list)
+  
+  output_df=pancake |>
+    mutate(pattern=reported_ac_name) |> 
+    mutate(pattern=paste0(" ",pattern," ")) |> 
+    mutate(p2=gsub(" $",",",pattern)) |> 
+    mutate(p3=gsub(" $","$",pattern)) |> 
+    mutate(pattern=paste0(pattern,"|",p2,"|",p3)) |> 
+    select(-c(p2,p3))
+  return(output_df)
+}
+
+## Build ac lookup
+ac_type_lookup_table=make_ac_type_lookup(ac_type_input_list=AIRCRAFT_SEARCH_STRINGS)
+
+
+
+## Extractor for aircraft type
+extract_aircraft=function(text_row,lookup_tbl) {
+  
+  if(length(text_row)!=1 || is.na(text_row)) {
+    return(tibble(
+      manufacturer=NA_character_,
+      ac_family=NA_character_,
+      standardised_ac_name=NA_character_,
+      reported_ac_name=NA_character_,
+      num_aircraft=0
+    ))
+  }
+  
+  hits=lookup_tbl[str_detect(text_row,lookup_tbl$pattern),]
+  
+  if(nrow(hits)==0) {
+    return(tibble(
+      manufacturer=NA_character_,
+      ac_family=NA_character_,
+      standardised_ac_name=NA_character_,
+      reported_ac_name=NA_character_,
+      num_aircraft=0
+    ))
+  }
+  
+  tibble(
+    manufacturer=paste(unique(hits$manufacturer),collapse="/"),
+    ac_family=paste(unique(hits$ac_family),collapse="/"),
+    standardised_ac_name=paste(unique(hits$standardised_ac_name),collapse="/"),
+    reported_ac_name=paste(unique(hits$reported_ac_name),collapse="/"),
+    num_aircraft=n_distinct(hits$standardised_ac_name)
+  )
+}
+
+
+
+## Do extract ac type
+data_with_ac_info=deduped_data |>
+  mutate(match=purrr::map(orig_text,~extract_aircraft(.x,lookup_tbl=ac_type_lookup_table))) |>
+  unnest(match)
+
+
+
+world_cities=tibble(maps::world.cities)
+
+world_cities_filtered=world_cities |> 
+  group_by(name) |> 
+  filter(pop==max(pop)) |> 
+  ungroup() |> 
+  mutate(name2=gsub("^'","",name))
 
 
 
 
 
-# dat_with_incident_si
+## functions for location extraction
 
-pig_with_ac_type=make_label_column(input_df=dedupe_pig,new_column_name=ac_type,str_list1=NULL,str_list2=ac_types2)
+## trims location trail
+trim_location_tail=function(x){
+  month_pattern=paste(c(month.abb,month.name),collapse="|")
+  sub(paste0("(?i)(\\son\\s|\\b(",month_pattern,")\\b|:|\\(|\\s\\d).*?$"),"",x,perl=TRUE)
+}
 
-pig_with_ac_type |> 
-  filter(is.na(ac_type)|ac_type=='') |> 
-  view()
+## clean location words
+clean_location_words=function(loc){
+  if(is.na(loc) || loc=="") return(loc)
+  words=str_split(loc,"\\s+")[[1]]
+  keep=words[str_detect(words,"^[A-Z]")|
+               str_detect(words,"^el(-|$)") |
+               str_to_lower(words)%in%c("and","enroute","el","de","la","of")
+  ]
+  str_squish(paste(keep,collapse=" "))
+}
+
+
+extract_one_location=function(x){
+  if(is.na(x)||x=="")return(tibble(location="",location_ind=""))
+  
+  indicators=c("at","near","between","over","overhead")
+  trimmed=trim_location_tail(x)
+  
+  loc_idx=map_dbl(indicators,\(kw){
+    m=str_locate(tolower(trimmed),paste0("\\b",kw,"\\b"))[1,1]
+    ifelse(is.na(m),Inf,m)
+  })
+  
+  if(all(is.infinite(loc_idx))){
+    location=""
+    indicator=""
+  }else{
+    indicator=indicators[which.min(loc_idx)]
+    location=sub(paste0(".*?\\b",indicator,"\\b\\s*"),"",trimmed,ignore.case=TRUE)
+    location=str_remove_all(location,"^[,;.:\\-\\s]+|[,;.:\\-\\s]+$")
+  }
+  
+  # if missing and enroute exist, then assign enroute
+  if(location==""&&grepl("\\benroute\\b",x,ignore.case=TRUE)){
+    location="enroute"
+    indicator="enroute"
+  }
+  
+  ## clean words (if not enroute)
+  if(indicator!="enroute"&&location!=""&&location!="enroute"){
+    location=clean_location_words(location)
+  }
+  
+  tibble(location=location,location_ind=indicator)
+}
+
+
+
+## location extraction wrapper
+extract_location=function(input_df,text_col="orig_text",city_names=NULL){
+  input_df|>
+    mutate(tmp=purrr::map(.data[[text_col]],extract_one_location))|>
+    unnest_wider(tmp)
+}
+
+
+
+## Inital extract locations
+locs_data=extract_location(deduped_data,city_names=NULL)
+
+
+## split up multi-location events
+locs_data_n_check=locs_data|>
+  mutate(comma_count=str_count(location,","),
+         and_count=str_count(location," and "))|>
+  mutate(comma_and_and_count=comma_count+and_count)|> 
+  mutate(do_split=if_else(and_count>0|comma_count>0,TRUE,FALSE))|>
+  mutate(max_split=max(comma_and_and_count)+1) 
+
+
+max_locs_split=locs_data_n_check$max_split[1]
+
+## make long
+# count number of locations per event
+locs_banana=locs_data_n_check|>
+  mutate(location2=gsub(" and ",", ",location))|> 
+  filter(do_split==TRUE) |> 
+  separate(location2,into = paste0("loc",1:max_locs_split),sep =",",remove = FALSE) |> 
+  select(orig_text,reporting_date,location,location_ind,location2,starts_with("loc")) |> 
+  gather(loc_grp,subloc,-c(orig_text,reporting_date,location,location_ind,location2)) |> 
+  mutate(subloc=trimws(subloc)) |> 
+  filter(!is.na(subloc)) |> 
+  group_by(orig_text,reporting_date) |> 
+  mutate(nlocations=n()) |> 
+  ungroup()
+
+
+locs_banana_fin=locs_banana |> 
+  select(orig_text,reporting_date,location,location_ind,location2=subloc,nlocations) |> 
+  ungroup()
+
+
+# join splitted multi-location events to single-location events
+locs_with_multi_split=locs_data_n_check |> 
+  filter(do_split==FALSE) |> 
+  mutate(location2=gsub("[,].*","",location)) |> 
+  select(orig_text,reporting_date,location,location_ind,location2) |> 
+  mutate(nlocations=1) |> 
+  ungroup() |> 
+  bind_rows(locs_banana_fin)
+
+
+
+# airport locations reference data
+airports_tbl=airportr::airports|>
+  select(airport=Name,
+         city=City,
+         iso_code=`Country Code (Alpha-3)`,
+         country=Country,
+         lat=Latitude,
+         long=Longitude)
+
+
+airport_level_lookup=airports_tbl |> 
+  mutate(location2=trimws(gsub("Airport","",airport))) |> 
+  select(location2,country2=country,iso_code2=iso_code,lat2=lat,long2=long)|> 
+  group_by(location2,country2,iso_code2) |> 
+  summarise(lat2=mean(lat2),long2=mean(long2),.groups='drop')
+
+
+city_airport_info=airports_tbl |>
+  mutate(location2=city) |>
+  select(location2,country2=country,iso_code2=iso_code,lat2=lat,long2=long) |> 
+  group_by(location2,country2,iso_code2) |> 
+  summarise(lat2=mean(lat2),long2=mean(long2),.groups='drop')
+
+
+## for events missing geo assignments such as city country lat long
+## left join city and airport tables and see if they match on variations of names
+## this is cheaper than exhaustive coordinate matching
+data_with_locs_and_geos=locs_with_multi_split |> 
+  left_join(world_cities_filtered |>
+              select(location=name2,country=country.etc,lat,long)) |>
+  left_join(world_cities_filtered |>
+              select(location2=name2,country2=country.etc,lat2=lat,long2=long)) |>
+  mutate(country=if_else(is.na(country)&!is.na(country2),country2,country),
+         lat=if_else(is.na(lat)&!is.na(lat2),lat2,lat),
+         long=if_else(is.na(long)&!is.na(long2),long2,long)) |> 
+  select(-c(country2,lat2,long2)) |> 
+  left_join(airport_level_lookup)|>
+  mutate(country=if_else(is.na(country)&!is.na(country2),country2,country),
+         lat=if_else(is.na(lat)&!is.na(lat2),lat2,lat),
+         long=if_else(is.na(long)&!is.na(long2),long2,long)) |> 
+  select(-c(country2,lat2,long2))|>
+  mutate(iso_code=countrycode(country,origin = "country.name",destination = "iso3c")) |> 
+  mutate(iso_code=if_else(is.na(iso_code),iso_code2,iso_code)) |> 
+  select(-iso_code2) |> 
+  left_join(city_airport_info)|>
+  mutate(country=if_else(is.na(country),country2,country),
+         iso_code=if_else(is.na(iso_code),iso_code2,iso_code),
+         lat=if_else(!is.finite(lat),lat2,lat),
+         long=if_else(!is.finite(long),long2,long)) |>
+  select(-c(iso_code2,country2,lat2,long2)) |>
+  ungroup() |> 
+  distinct() |> 
+  mutate(iso_code2=countrycode(location2,origin = "country.name",destination = "iso3c")) |> 
+  mutate(iso_code=if_else(is.na(iso_code),iso_code2,iso_code)) |>
+  select(-iso_code2) |>
+  mutate(country2=countrycode(iso_code,origin = "iso3c",destination = "country.name")) |>
+  mutate(country=if_else(is.na(country),country2,country)) |>
+  select(-country2) |>
+  ungroup();data_with_locs_and_geos
+
+# write_csv(data_with_locs_and_geos,"~/Desktop/data_with_locs_and_geos.csv")
+
+final_missing_locs=data_with_locs_and_geos |> 
+  filter(location!="" & (is.na(country)|country=="")) |> 
+  filter(!grepl("Sea|Bay|Gulf",location2)) |> 
+  filter(!location2 %in% c("Atlantic","Pacific","enroute")) |> 
+  select(location2) |> 
+  arrange(location2) |> 
+  distinct() 
+
+
+
+deduped_data |> 
+  mutate(mo=extract_month_numbers(orig_text))
+
+
+
+extract_day_numbers <- function(x) {
+  # match 1–2 digit numbers, possibly followed by st/nd/rd/th
+  pattern <- "\\b(\\d{1,2})(?:st|nd|rd|th)?\\b"
+  
+  # extract first match per string
+  match <- stringr::str_extract(x, regex(pattern, ignore_case = TRUE))
+  
+  # remove any ordinal suffix and convert to integer
+  as.integer(gsub("(st|nd|rd|th)$", "", match, ignore.case = TRUE))
+}
+
+
+deduped_data |> 
+  mutate(day=extract_day_numbers(orig_text))
+
+
+extract_dates=function(x) {
+  
+  months_all=c(month.name,month.abb)
+  months_pattern=paste(months_all,collapse="|")
+  current_year=as.integer(format(Sys.Date(),"%Y"))
+  
+  # Match formats: Month Year, Month Day Year, Day Month Year
+  date_pattern=paste0(
+    "(?i)",
+    "(\\b(",months_pattern,")\\b\\s*(\\d{1,2}(?:st|nd|rd|th)\\b)?\\s*,?\\s*(199\\d|20\\d{2}|",current_year,")?)|",
+    "(\\b\\d{1,2}(?:st|nd|rd|th)?\\s+(",months_pattern,")\\b\\s*,?\\s*(199\\d|20\\d{2}|",current_year,")?)")
+  
+  matches=str_extract_all(x,regex(date_pattern, ignore_case = TRUE))
+  
+  purrr::map(matches,function(ms){
+    if(length(ms)==0){
+      return(tibble(month=NA_integer_,day=NA_integer_,year=NA_integer_,date=as.Date(NA),n_dates=0))
+    }
+    
+    purrr::map_dfr(ms,function(mtxt){
+      # Extract month
+      m_match<-str_extract(mtxt,regex(months_pattern,ignore_case=TRUE))
+      month_num<-match(tolower(m_match),tolower(months_all))
+      month_num<-ifelse(!is.na(month_num)&month_num>12,month_num-12,month_num)
+      
+      # Extract day (ignore if part of a 4-digit year)
+      d_match=str_extract(mtxt, "(?<!\\d)\\b\\d{1,2}(?:st|nd|rd|th)?\\b(?!\\d{2})")
+      day_num<-as.integer(gsub("(st|nd|rd|th)$", "", d_match, ignore.case = TRUE))
+      
+      # Extract year
+      y_match=str_extract(mtxt,"\\b(199\\d|20\\d{2})\\b")
+      year_num<-as.integer(y_match)
+      if (!is.na(year_num) && (year_num < 1990 || year_num > current_year)) year_num <- NA_integer_
+      
+      # Use 15 if only month+year are present but no day
+      if (is.na(day_num) && !is.na(month_num) && !is.na(year_num)) {
+        day_num <- 15L
+      }
+      
+      # make date
+      date_std<-suppressWarnings(make_date(year_num,month_num,day_num))
+      
+      tibble(month=month_num,day=day_num,year=year_num,date=date_std)
+    })|>
+      mutate(n_dates=n())
+  })
+}
+
+
+
+## initial data with dates
+data_with_dates=deduped_data |> 
+  mutate(date_parts = extract_dates(orig_text)) |>
+  unnest(date_parts)
+
+## estimate missing dates based on reported date
+data_with_estimated_dates=data_with_dates |>
+  mutate(reporting_lag=as.numeric(reporting_date-date)) |>
+  mutate(reporting_lag=if_else(reporting_lag<1,as.numeric(NA),reporting_lag)) |> 
+  mutate(avg_reporting_lag=median(reporting_lag,na.rm=T)) |> 
+  mutate(est_date=reporting_date-avg_reporting_lag) |> 
+  mutate(date_source=if_else(is.na(date)&!is.na(est_date),"Estimated","Extracted")) |> 
+  mutate(date=if_else(is.na(date),est_date,date)) |> 
+  select(orig_text,reporting_date,date,date_source) |> 
+  group_by(orig_text,reporting_date) |> 
+  filter(date==min(date)) |> 
+  ungroup()
+
+
+
+
+extract_airline <- function(x) {
+  
+  if (is.na(x) || x == "") return(NA_character_)
+  
+  ## Normalise spacing
+  x_clean <- str_squish(x)
+  
+  ## Define strong airline keywords
+  airline_keywords <- c("Airlines?", "Airways?", "Air ", "Flight", "Cargo", "Express",
+                        "Aviation", "Cargo", "Jet", "Fly", "Lines", "Sky", "Wings")
+  airline_pattern <- paste(airline_keywords, collapse = "|")
+  
+  ## Extract airline candidates (word groups before/around keyword)
+  match <- str_extract(
+    x_clean,
+    paste0(
+      "(?i)\\b([A-Z][a-zA-Z]+(?:\\s+[A-Z][a-zA-Z]+){0,2}\\s+(?:", airline_pattern, "))\\b"
+    )
+  )
+  
+  ## If no match, try uppercase short airline identifiers (e.g., KLM, UPS, SAS)
+  if (is.na(match)) {
+    match <- str_extract(x_clean, "\\b[A-Z]{2,4}\\b(?=\\s+(?:flight|aircraft|A\\d|B\\d))")
+  }
+  
+  ## Clean up result
+  match <- str_remove_all(match, "\\b(Flight|Airlines?|Airways?|Air|Cargo|Aviation|Express|Jet|Fly|Lines|Wings)\\b$")
+  match <- str_squish(match)
+  if (is.na(match) || match == "") return(NA_character_)
+  
+  ## Reattach keyword if relevant
+  keyword <- str_extract(x_clean, "(?i)(Airlines?|Airways?|Air|Cargo|Aviation|Express|Jet|Fly|Lines|Wings)")
+  airline_full <- if (!is.na(keyword) && !str_detect(match, keyword)) paste(match, keyword) else match
+  
+  airline_full
+}
+
+## extract airlines
+deduped_data_with_airline <- deduped_data %>%
+  mutate(airline = map_chr(orig_text, extract_airline))
+
+
+
 
 # Parse fields and infer airline / country
-pig_parsed=dedupe_pig |>
-  filter(orig_text!="") |> 
+pig_parsed=deduped_data |>
+  filter(orig_text!="") |>
   mutate(
-    # airline=str_extract(orig_text,"^[A-Za-z\\s]+?(?=\\s[A-Z0-9]{3,4})") |> str_squish(),
-    # aircraft=str_extract(orig_text,"[A-Z0-9]{3,4}(?=\\s(?:at|near))"),
-    location=str_extract(orig_text,"(?<=at\\s|near\\s)[A-Za-z\\s]+(?=\\son\\s)") |> str_squish(),
+    airline=str_extract(orig_text,"^[A-Za-z\\s]+?(?=\\s[A-Z0-9]{3,4})") |> str_squish(),
     date_raw=str_extract(orig_text,"on\\s[A-Za-z]+\\s\\d{1,2}[a-z]{2}\\s\\d{4}") |> str_remove("^on\\s"),
     date=parse_date_time(date_raw,orders="b dY"),
     incident_summary=str_extract(orig_text,",\\s.*$") |> str_remove("^,\\s"),
-    # airline_code=str_extract(airline,"\\b[A-Z]{2}\\b"),
-    across(everything(),str_squish)) 
-# |> 
-#   repair_airline_names()
-
+    across(everything(),str_squish)) |> 
+  mutate(incident_summary=if_else(
+    is.na(incident_summary),
+    str_extract(orig_text,":|-\\s.*$") |> str_remove("^:|-\\s"),incident_summary))
+pig_parsed
 
 
 # write_csv(pig_parsed,"~/Desktop/pig_parsed.csv")

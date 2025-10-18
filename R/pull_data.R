@@ -78,11 +78,7 @@ dedupe_raw_data=raw_data |>
   ungroup()
 
 # write_csv(dedupe_raw_data,"~/Desktop/avh_raw_data.csv")
-
 # dedupe_raw_data=read_csv("~/Desktop/avh_raw_data.csv",show_col_types = F)
-
-
-
 
 
 
@@ -111,267 +107,267 @@ prep_candidate_region=function(txt) {
   xu
 }
 
-
-## literal extractor (no rewriting)
-extract_aircraft_names=function(txt) {
-  if (is.na(txt)||txt=="") return(NA_character_)
-  
-  region=prep_candidate_region(txt)
-  if (region=="") return(NA_character_)
-  
-  ## phrase patterns (makers + model)
-  phrase_pat=paste0(
-    "\\b(",
-    "BOEING\\s?\\d{3}(?:-\\d{2,3})?",
-    "|AIRBUS\\s?A?\\d{3}(?:-\\d{2,3})?",
-    "|EMBRAER\\s?\\d{2,3}",
-    "|FOKKER\\s?\\d{2,3}",
-    "|SAAB\\s?\\d{2,4}",
-    "|JETSTREAM\\s?\\d{2,3}",
-    "|DASH\\s?-?8(?:\\s?Q?\\s?\\d{0,3})?",
-    "|BAE\\s?146(?:-\\d{3})?",
-    "|AVRO\\s?RJ\\d{2,3}",
-    "|SHORTS\\s?(?:330|360)",
-    "|DORNIER\\s?(?:228|328)",
-    "|TWIN\\s+OTTER",
-    ")\\b"
-  )
-  
-  ## compact codes (must start with letters to avoid dates)
-  code_pat=paste0(
-    "\\b(",
-    "B\\d{3}[A-Z]?|B7\\d{2}(?:-\\d{2,3})?|BLCF",
-    "|A\\d{3}[A-Z]{0,2}|A\\d{2}[A-Z]{1,2}",
-    "|DC-?\\d{1,3}[A-Z]?|MD-?\\d{2,3}",
-    "|CRJ-?\\d{1,3}|RJ\\d{2,3}|RJ1H",
-    "|ERJ-?\\d{2,3}|E\\d{3}|CL\\d{3,4}",
-    "|ATR-?\\d{2,3}|AT(?:42|72)",
-    "|DHC-?\\d{1,3}|DH8[ABCD]|Q400",
-    "|AN-?\\d{2,3}|IL-?\\d{2,3}|SU\\d{2,3}|SSJ-?100",
-    "|JS\\d{2}|SH\\d{2}|SH36",
-    "|C212|C208(?:GC)?|C\\d{3}",
-    "|F\\d{2,3}|YK\\d{2}",
-    ")\\b"
-  )
-  
-  ## find matches in uppercased region for stable matching
-  reg_up=toupper(region)
-  hits_up=c(
-    str_extract_all(reg_up,phrase_pat)[[1]],
-    str_extract_all(reg_up,code_pat)[[1]]
-  )
-  if (length(hits_up)==0) return(NA_character_)
-  
-  ## clean: drop trailing punct, plural 'S'
-  hits_up=hits_up |>
-    str_replace_all("[,.;:)]+$","") |>
-    str_replace("(?<=[A-Z0-9])S$","") |>
-    unique()
-  
-  ## filter: must contain both letters and digits; not years/ordinals
-  hits_up=hits_up[str_detect(hits_up,"[A-Z]") & str_detect(hits_up,"\\d")]
-  hits_up=hits_up[!str_detect(hits_up,"^(19|20)\\d{2}$")]
-  hits_up=hits_up[!str_detect(hits_up,"^\\d{1,2}(ST|ND|RD|TH)$")]
-  
-  if (length(hits_up)==0) return(NA_character_)
-  
-  ## map back to original-case substrings from the original text
-  res=map_chr(hits_up,\(h){
-    m=str_extract(txt,regex(h,ignore_case=TRUE))
-    ifelse(is.na(m),h,m)
-  }) |> unique()
-  
-  if (length(res)==0) return(NA_character_)
-  res
-}
-
-
-# avh_raw=read_csv("avh_raw_data.csv")|>tibble()
-
-ac_names_temp=unlist(lapply(split(avh_raw,avh_raw$rn), function(z){
-  tryCatch({extract_aircraft_names(z[1])},error=function(e)NULL)
-}))
-ac_names=sort(unique(ac_names_temp))
-ac_names=ac_names[!grepl("[,]",ac_names)]
-ac_names
-
-
-aircraft_found=avh_raw|>
-  mutate(aircraft_candidates=map_chr(orig_text,extract_aircraft_names))
-
-aircraft_found|>select(orig_text,aircraft_candidates)
-
-
-aircraft_found|>select(orig_text,aircraft_candidates) |> 
-  filter(is.na(aircraft_candidates)) |> 
-  view()
-
-## MISSING
-## MD-10, DC-9-10, MD-82, AN-140, TU-154M, CRJ-100, MD-88, Tu-134, MD-83, DC-9, CRJ, MD-10
-
-
-parse_aircraft_text=function(x) {
-  
-  if (is.na(x)||x=="") return(tibble(
-    aircraft_types=NA_character_,
-    event_date=NA_Date_,
-    airlines=NA_character_,
-    location=NA_character_,
-    number_of_aircraft=NA_integer_,
-    event_description=NA_character_
-  ))
-  
-  ## ---------- aircraft extraction ----------
-  ## 1) Phrase-level patterns (multiword, hyphenated, with makers)
-  phrase_terms=c(
-    "Fokker\\s?(?:50|70|100)",
-    "Saab\\s?(?:340|2000)",
-    "Jetstream\\s?(?:31|32|41)",
-    "BAe\\s?146(?:-?\\d{3})?",
-    "Avro\\s?RJ\\d{2,3}",
-    "Twin\\s+Otter",
-    "Dash\\s?-?8(?:\\s?Q?\\s?\\d{0,3})?",
-    "Embraer\\s?(?:145|170|175|190|195)",
-    "Boeing\\s?\\d{3}(?:-\\d{2,3})?",
-    "Airbus\\s?A?\\d{3}(?:-\\d{2,3})?",
-    "Dornier\\s?(?:228|328)",
-    "Shorts\\s?(?:330|360)",
-    "Cessna\\s?(?:208|172|152)"
-  )
-  phrase_pat=paste0("(?i)\\b(",paste(phrase_terms,collapse="|"),")\\b")
-  phrase_hits=str_extract_all(x,phrase_pat)|>unlist()
-  
-  ## 2) Code-level patterns (short ICAO/IATA and common aliases)
-  code_pat=paste0(
-    "\\b(?:",
-    ## Boeing short/long
-    "BLCF|B7\\d{2}(?:-\\d{2,3})?|B\\d{3}[A-Z]?|\\d{3}(?:-\\d{2,3})?(?=\\b)",  ## 747, 767-300
-    "|",
-    ## Airbus incl. neo codes
-    "A\\d{3}[A-Z]{0,2}|A\\d{2}[A-Z]{1,2}",                                   ## A333,A20N,A21N
-    "|",
-    ## Douglas / MD
-    "DC-?\\d{1,3}[A-Z]?|DC3T|MD-?\\d{2,3}",
-    "|",
-    ## CRJ / RJ
-    "CRJ-?\\d{1,3}|RJ\\d{2,3}|RJ1H",
-    "|",
-    ## ERJ / E-jets / Challenger
-    "ERJ-?\\d{2,3}|E\\d{3}|CL\\d{3,4}",
-    "|",
-    ## ATR / AT short
-    "ATR-?\\d{2,3}|AT(?:42|72)",
-    "|",
-    ## De Havilland / DHC / DH8 codes
-    "DHC-?\\d{1,3}|DH8[ABCD]s?|Q400|DASH-?8",
-    "|",
-    ## Saab short codes
-    "SF34|SB20|SW4",
-    "|",
-    ## Fokker short codes
-    "F\\d{2,3}",
-    "|",
-    ## Dornier/Do
-    "DO\\s?\\d{2,3}|D\\d{3}|D228|D328|J328",
-    "|",
-    ## Antonov
-    "AN-?\\d{2,3}",
-    "|",
-    ## Ilyushin
-    "IL-?\\d{2,3}",
-    "|",
-    ## Sukhoi
-    "SU\\d{2,3}|SSJ-?100",
-    "|",
-    ## Jetstream
-    "JS\\d{2}",
-    "|",
-    ## Shorts short code
-    "SH\\d{2}|SH36",
-    "|",
-    ## CASA/C-series
-    "C212|C208GC|C208|C\\d{3}",
-    "|",
-    ## Yakovlev
-    "YK\\d{2}",
-    "|",
-    ## Misc numerics we want to keep when stand-alone (752,738,763 etc.)
-    "(?<![A-Z])7(?:3[57]|4[7]|6[37]|8[7])(?:\\d)?",                          ## 737/738/752/763/787 etc.
-    "(?<![A-Z])\\d{3}(?:-\\d{2,3})?",                                        ## generic 767-300 case
-    ")\\b"
-  )
-  code_hits=str_extract_all(toupper(x),code_pat)|>unlist()
-  
-  ## Combine + clean tokens
-  raw_tokens=c(phrase_hits,code_hits)
-  tok=raw_tokens|>
-    str_replace_all("[,.;:)]+$","")|>
-    str_replace("(?<=[A-Z0-9])S$","")|>   ## B763s->B763, DH8Ds->DH8D
-    str_squish()|>
-    unique()
-  
-  ## Remove pure years
-  tok=tok[!str_detect(tok,"^(19|20)\\d{2}$")]
-  
-  ## Keep only plausible aircraft prefixes or known phrases
-  keep_pat=paste0(
-    "(?i)^(",
-    "B|B7|BOEING|A|AIRBUS|DC|MD|CRJ|RJ|ERJ|E|CL|ATR|AT|DHC|DH8|DASH|AN|IL|SU|",
-    "JS|BAE|AVRO|F|FOKKER|DO|DORNIER|SH|SHORTS|C|CESSNA|CASA|YK|SF34|SB20|",
-    "Q400|BLCF|TWIN\\s+OTTER|JETSTREAM|SAAB|DASH|\\d{3}(-\\d{2,3})?",
-    ")"
-  )
-  tok=tok[str_detect(tok,keep_pat)]
-  
-  aircraft=ifelse(length(tok)==0,NA_character_,paste(tok,collapse=", "))
-  
-  ## ---------- airline ----------
-  airline=str_extract(x,"^[A-Z][A-Za-z\\s&']+(?=\\s+[A-Za-z]*\\d)") %||% ""
-  
-  ## ---------- location (at|near) ----------
-  location=str_extract(
-    x,
-    "(?<=\\b(?:at|near)\\s)[A-Za-z0-9'./()\\-\\s,]+?(?=(\\s+(on|when|after|around)\\s)|[,.;]|$)"
-  )|>str_trim()
-  if (is.na(location)||location=="") {
-    location=str_extract(x,",\\s*([^,]+?)\\s+(?=(on|when|after)\\s)")|>
-      str_replace("^,\\s*","")|>str_trim()
-  }
-  if (is.na(location)||location=="") location=NA_character_
-  
-  ## ---------- date ----------
-  date_raw=str_extract(x,"\\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\\s+\\d{1,2}(st|nd|rd|th)?(\\s+\\d{4})?")
-  event_date=parse_date_time(date_raw,orders=c("b d Y","b d","bdY","bd"),quiet=TRUE)|>as_date()
-  
-  ## ---------- number of aircraft ----------
-  number_of_aircraft=ifelse(is.na(aircraft),NA_integer_,str_count(aircraft,",")+1)
-  
-  ## ---------- description ----------
-  event_desc=str_extract(x,"(?<=\\b\\d{4}[.,;:]?\\s)(.*)$")
-  if (is.na(event_desc)||event_desc=="") {
-    event_desc=str_extract(x,"(?<=\\b(?:at|near)\\s)[^,]+(.*)$")
-  }
-  event_desc=ifelse(is.na(event_desc)||event_desc=="",NA_character_,str_trim(event_desc))
-  
-  tibble(
-    aircraft_types=aircraft,
-    event_date=event_date,
-    airlines=airline,
-    location=location,
-    number_of_aircraft=number_of_aircraft,
-    event_description=event_desc
-  )
-}
-
-parsed_data=avh_raw|>
-  filter(!is.na(orig_text))|>
-  mutate(orig_text=str_replace_all(orig_text,"\\s+"," "))|>
-  rowwise()|>
-  mutate(tmp=list(parse_aircraft_text(orig_text)))|>
-  unnest(cols=c(tmp))
-
-parsed_data|>
-  select(orig_text,aircraft_types,event_date,airlines,location,number_of_aircraft,event_description)
+# 
+# ## literal extractor (no rewriting)
+# extract_aircraft_names=function(txt) {
+#   if (is.na(txt)||txt=="") return(NA_character_)
+#   
+#   region=prep_candidate_region(txt)
+#   if (region=="") return(NA_character_)
+#   
+#   ## phrase patterns (makers + model)
+#   phrase_pat=paste0(
+#     "\\b(",
+#     "BOEING\\s?\\d{3}(?:-\\d{2,3})?",
+#     "|AIRBUS\\s?A?\\d{3}(?:-\\d{2,3})?",
+#     "|EMBRAER\\s?\\d{2,3}",
+#     "|FOKKER\\s?\\d{2,3}",
+#     "|SAAB\\s?\\d{2,4}",
+#     "|JETSTREAM\\s?\\d{2,3}",
+#     "|DASH\\s?-?8(?:\\s?Q?\\s?\\d{0,3})?",
+#     "|BAE\\s?146(?:-\\d{3})?",
+#     "|AVRO\\s?RJ\\d{2,3}",
+#     "|SHORTS\\s?(?:330|360)",
+#     "|DORNIER\\s?(?:228|328)",
+#     "|TWIN\\s+OTTER",
+#     ")\\b"
+#   )
+#   
+#   ## compact codes (must start with letters to avoid dates)
+#   code_pat=paste0(
+#     "\\b(",
+#     "B\\d{3}[A-Z]?|B7\\d{2}(?:-\\d{2,3})?|BLCF",
+#     "|A\\d{3}[A-Z]{0,2}|A\\d{2}[A-Z]{1,2}",
+#     "|DC-?\\d{1,3}[A-Z]?|MD-?\\d{2,3}",
+#     "|CRJ-?\\d{1,3}|RJ\\d{2,3}|RJ1H",
+#     "|ERJ-?\\d{2,3}|E\\d{3}|CL\\d{3,4}",
+#     "|ATR-?\\d{2,3}|AT(?:42|72)",
+#     "|DHC-?\\d{1,3}|DH8[ABCD]|Q400",
+#     "|AN-?\\d{2,3}|IL-?\\d{2,3}|SU\\d{2,3}|SSJ-?100",
+#     "|JS\\d{2}|SH\\d{2}|SH36",
+#     "|C212|C208(?:GC)?|C\\d{3}",
+#     "|F\\d{2,3}|YK\\d{2}",
+#     ")\\b"
+#   )
+#   
+#   ## find matches in uppercased region for stable matching
+#   reg_up=toupper(region)
+#   hits_up=c(
+#     str_extract_all(reg_up,phrase_pat)[[1]],
+#     str_extract_all(reg_up,code_pat)[[1]]
+#   )
+#   if (length(hits_up)==0) return(NA_character_)
+#   
+#   ## clean: drop trailing punct, plural 'S'
+#   hits_up=hits_up |>
+#     str_replace_all("[,.;:)]+$","") |>
+#     str_replace("(?<=[A-Z0-9])S$","") |>
+#     unique()
+#   
+#   ## filter: must contain both letters and digits; not years/ordinals
+#   hits_up=hits_up[str_detect(hits_up,"[A-Z]") & str_detect(hits_up,"\\d")]
+#   hits_up=hits_up[!str_detect(hits_up,"^(19|20)\\d{2}$")]
+#   hits_up=hits_up[!str_detect(hits_up,"^\\d{1,2}(ST|ND|RD|TH)$")]
+#   
+#   if (length(hits_up)==0) return(NA_character_)
+#   
+#   ## map back to original-case substrings from the original text
+#   res=map_chr(hits_up,\(h){
+#     m=str_extract(txt,regex(h,ignore_case=TRUE))
+#     ifelse(is.na(m),h,m)
+#   }) |> unique()
+#   
+#   if (length(res)==0) return(NA_character_)
+#   res
+# }
+# 
+# 
+# # avh_raw=read_csv("avh_raw_data.csv")|>tibble()
+# 
+# ac_names_temp=unlist(lapply(split(avh_raw,avh_raw$rn), function(z){
+#   tryCatch({extract_aircraft_names(z[1])},error=function(e)NULL)
+# }))
+# ac_names=sort(unique(ac_names_temp))
+# ac_names=ac_names[!grepl("[,]",ac_names)]
+# ac_names
+# 
+# 
+# aircraft_found=avh_raw|>
+#   mutate(aircraft_candidates=map_chr(orig_text,extract_aircraft_names))
+# 
+# aircraft_found|>select(orig_text,aircraft_candidates)
+# 
+# 
+# aircraft_found|>select(orig_text,aircraft_candidates) |> 
+#   filter(is.na(aircraft_candidates)) |> 
+#   view()
+# 
+# ## MISSING
+# ## MD-10, DC-9-10, MD-82, AN-140, TU-154M, CRJ-100, MD-88, Tu-134, MD-83, DC-9, CRJ, MD-10
+# 
+# 
+# parse_aircraft_text=function(x) {
+#   
+#   if (is.na(x)||x=="") return(tibble(
+#     aircraft_types=NA_character_,
+#     event_date=NA_Date_,
+#     airlines=NA_character_,
+#     location=NA_character_,
+#     number_of_aircraft=NA_integer_,
+#     event_description=NA_character_
+#   ))
+#   
+#   ## ---------- aircraft extraction ----------
+#   ## 1) Phrase-level patterns (multiword, hyphenated, with makers)
+#   phrase_terms=c(
+#     "Fokker\\s?(?:50|70|100)",
+#     "Saab\\s?(?:340|2000)",
+#     "Jetstream\\s?(?:31|32|41)",
+#     "BAe\\s?146(?:-?\\d{3})?",
+#     "Avro\\s?RJ\\d{2,3}",
+#     "Twin\\s+Otter",
+#     "Dash\\s?-?8(?:\\s?Q?\\s?\\d{0,3})?",
+#     "Embraer\\s?(?:145|170|175|190|195)",
+#     "Boeing\\s?\\d{3}(?:-\\d{2,3})?",
+#     "Airbus\\s?A?\\d{3}(?:-\\d{2,3})?",
+#     "Dornier\\s?(?:228|328)",
+#     "Shorts\\s?(?:330|360)",
+#     "Cessna\\s?(?:208|172|152)"
+#   )
+#   phrase_pat=paste0("(?i)\\b(",paste(phrase_terms,collapse="|"),")\\b")
+#   phrase_hits=str_extract_all(x,phrase_pat)|>unlist()
+#   
+#   ## 2) Code-level patterns (short ICAO/IATA and common aliases)
+#   code_pat=paste0(
+#     "\\b(?:",
+#     ## Boeing short/long
+#     "BLCF|B7\\d{2}(?:-\\d{2,3})?|B\\d{3}[A-Z]?|\\d{3}(?:-\\d{2,3})?(?=\\b)",  ## 747, 767-300
+#     "|",
+#     ## Airbus incl. neo codes
+#     "A\\d{3}[A-Z]{0,2}|A\\d{2}[A-Z]{1,2}",                                   ## A333,A20N,A21N
+#     "|",
+#     ## Douglas / MD
+#     "DC-?\\d{1,3}[A-Z]?|DC3T|MD-?\\d{2,3}",
+#     "|",
+#     ## CRJ / RJ
+#     "CRJ-?\\d{1,3}|RJ\\d{2,3}|RJ1H",
+#     "|",
+#     ## ERJ / E-jets / Challenger
+#     "ERJ-?\\d{2,3}|E\\d{3}|CL\\d{3,4}",
+#     "|",
+#     ## ATR / AT short
+#     "ATR-?\\d{2,3}|AT(?:42|72)",
+#     "|",
+#     ## De Havilland / DHC / DH8 codes
+#     "DHC-?\\d{1,3}|DH8[ABCD]s?|Q400|DASH-?8",
+#     "|",
+#     ## Saab short codes
+#     "SF34|SB20|SW4",
+#     "|",
+#     ## Fokker short codes
+#     "F\\d{2,3}",
+#     "|",
+#     ## Dornier/Do
+#     "DO\\s?\\d{2,3}|D\\d{3}|D228|D328|J328",
+#     "|",
+#     ## Antonov
+#     "AN-?\\d{2,3}",
+#     "|",
+#     ## Ilyushin
+#     "IL-?\\d{2,3}",
+#     "|",
+#     ## Sukhoi
+#     "SU\\d{2,3}|SSJ-?100",
+#     "|",
+#     ## Jetstream
+#     "JS\\d{2}",
+#     "|",
+#     ## Shorts short code
+#     "SH\\d{2}|SH36",
+#     "|",
+#     ## CASA/C-series
+#     "C212|C208GC|C208|C\\d{3}",
+#     "|",
+#     ## Yakovlev
+#     "YK\\d{2}",
+#     "|",
+#     ## Misc numerics we want to keep when stand-alone (752,738,763 etc.)
+#     "(?<![A-Z])7(?:3[57]|4[7]|6[37]|8[7])(?:\\d)?",                          ## 737/738/752/763/787 etc.
+#     "(?<![A-Z])\\d{3}(?:-\\d{2,3})?",                                        ## generic 767-300 case
+#     ")\\b"
+#   )
+#   code_hits=str_extract_all(toupper(x),code_pat)|>unlist()
+#   
+#   ## Combine + clean tokens
+#   raw_tokens=c(phrase_hits,code_hits)
+#   tok=raw_tokens|>
+#     str_replace_all("[,.;:)]+$","")|>
+#     str_replace("(?<=[A-Z0-9])S$","")|>   ## B763s->B763, DH8Ds->DH8D
+#     str_squish()|>
+#     unique()
+#   
+#   ## Remove pure years
+#   tok=tok[!str_detect(tok,"^(19|20)\\d{2}$")]
+#   
+#   ## Keep only plausible aircraft prefixes or known phrases
+#   keep_pat=paste0(
+#     "(?i)^(",
+#     "B|B7|BOEING|A|AIRBUS|DC|MD|CRJ|RJ|ERJ|E|CL|ATR|AT|DHC|DH8|DASH|AN|IL|SU|",
+#     "JS|BAE|AVRO|F|FOKKER|DO|DORNIER|SH|SHORTS|C|CESSNA|CASA|YK|SF34|SB20|",
+#     "Q400|BLCF|TWIN\\s+OTTER|JETSTREAM|SAAB|DASH|\\d{3}(-\\d{2,3})?",
+#     ")"
+#   )
+#   tok=tok[str_detect(tok,keep_pat)]
+#   
+#   aircraft=ifelse(length(tok)==0,NA_character_,paste(tok,collapse=", "))
+#   
+#   ## ---------- airline ----------
+#   airline=str_extract(x,"^[A-Z][A-Za-z\\s&']+(?=\\s+[A-Za-z]*\\d)") %||% ""
+#   
+#   ## ---------- location (at|near) ----------
+#   location=str_extract(
+#     x,
+#     "(?<=\\b(?:at|near)\\s)[A-Za-z0-9'./()\\-\\s,]+?(?=(\\s+(on|when|after|around)\\s)|[,.;]|$)"
+#   )|>str_trim()
+#   if (is.na(location)||location=="") {
+#     location=str_extract(x,",\\s*([^,]+?)\\s+(?=(on|when|after)\\s)")|>
+#       str_replace("^,\\s*","")|>str_trim()
+#   }
+#   if (is.na(location)||location=="") location=NA_character_
+#   
+#   ## ---------- date ----------
+#   date_raw=str_extract(x,"\\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\\s+\\d{1,2}(st|nd|rd|th)?(\\s+\\d{4})?")
+#   event_date=parse_date_time(date_raw,orders=c("b d Y","b d","bdY","bd"),quiet=TRUE)|>as_date()
+#   
+#   ## ---------- number of aircraft ----------
+#   number_of_aircraft=ifelse(is.na(aircraft),NA_integer_,str_count(aircraft,",")+1)
+#   
+#   ## ---------- description ----------
+#   event_desc=str_extract(x,"(?<=\\b\\d{4}[.,;:]?\\s)(.*)$")
+#   if (is.na(event_desc)||event_desc=="") {
+#     event_desc=str_extract(x,"(?<=\\b(?:at|near)\\s)[^,]+(.*)$")
+#   }
+#   event_desc=ifelse(is.na(event_desc)||event_desc=="",NA_character_,str_trim(event_desc))
+#   
+#   tibble(
+#     aircraft_types=aircraft,
+#     event_date=event_date,
+#     airlines=airline,
+#     location=location,
+#     number_of_aircraft=number_of_aircraft,
+#     event_description=event_desc
+#   )
+# }
+# 
+# parsed_data=avh_raw|>
+#   filter(!is.na(orig_text))|>
+#   mutate(orig_text=str_replace_all(orig_text,"\\s+"," "))|>
+#   rowwise()|>
+#   mutate(tmp=list(parse_aircraft_text(orig_text)))|>
+#   unnest(cols=c(tmp))
+# 
+# parsed_data|>
+#   select(orig_text,aircraft_types,event_date,airlines,location,number_of_aircraft,event_description)
 
 
 
