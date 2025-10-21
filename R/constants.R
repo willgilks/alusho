@@ -1,31 +1,52 @@
 
+## dat scrape and analysis
+end_of_first_period="2022-07-15"
+start_of_second_period="2022-08-15"
+end_of_second_period="2023-08-01"
+earliest_overall_date="1994-03-01"
+earliest_test_date=Sys.Date()-365
+
 
 ## constants for string pattern matching when summarising events.
 {
   times1=list(
-    approach=c("approach","descent","go around","initial climb","landed","on landing","hard landing",
+    approach=c("approach","descent","go around","initial climb","landed","on landing","landing","hard landing","localizer",
                "touch down","touchdown","touched down","roll out","rollout"),
-    on_ground=c("apron","at stand","ground worker","push back","taxi","line up","turn off","on runway","runway excursion"),
-    departure=c("departure","departed","climb out","takeoff","take off","could not retract landing gear"),
+    runway=c("runway"),
+    taxiway=c("taxiway"),
+    on_ground=c("apron","at stand","ground worker","push back","taxi","line up","turn off","at gate"),
+    departure=c("departure","departed","climb out","takeoff","take off","could not retract landing gear","took off"),
     enroute=c("in flight","midair","enroute"))
   
   animals1=list(
     bird=c("birds","bird","goose","geese"),
-    other=c("dog","coyote"),
+    other=c("dog","coyote")
   )
   
-  
+  weather=list(
+    rain=c("rain")
+  )
   ac_parts1=list(
+    antiice=c("anti-ice","antiice"), 
+    battery=c("battery","Battery","batteries"),
     electric=c("electric","electronic"),
     navigation=c("nav","navigation"),
     toilet=c("lavatory","toilet"),
     FMS=c("FMS","FMSs"),
-    GPS=c("GPS","EGPWS","GPWS"),
-    engine=c("engine","propeller"),
+    GPS=c("GPS"),
+    GPWS=c("EGPWS","GPWS"),
+    engine=c("engine"),
+    propeller=c("propeller"),
     oil=c("^oil"," oil"),
-    pressure=c("pressurization","pressure"))
+    oven=c("^oven"," oven"),
+    seat=c(" seat "," seat$"),
+    comms=c(" comms"," communcation"),
+    pressure=c("pressurization","pressure"),
+    vehicle=c("vehicle"),
+    snow_plough="snow plough")
   
   ac_parts2=c(
+    "avionics",
     "hydraulic", "instrument",
     "MCP speed selector",
     "flight control",
@@ -38,33 +59,39 @@
     "altitude sensor",
     "APU",
     "autopilot", 
-    "battery",
     "bleed",
     "brake",
     "cabin",
     "charger",
     "cockpit",
+    "coffee",
     "cargo",
-    "door", 
+    "door",
+    "display",
     "elevator",
     "computer",
     "flight deck",
+    "fuselage",
     "flap",
     "fuel", 
     "galley",
     "gear",
+    "loader",
+    "luggage",
     "tyre","wheel",
     "on board",
     "oxygen","panel",
     "phone",
     "power bank",
     "radar altimeter",
-    "RAT","radio","radome",
+    "RAT","radio","radome","reverser",
     "slat","spoiler","stairs",
     "tail",
     "weather radar",
+    "radar",
     "rudder",
     "slat",
+    "ventilation",
     "water system",
     "windshield","window","wing","wing tip")
   
@@ -73,95 +100,121 @@
   
   people1=list(
     pilot=c("captain","copilot","pilot","^pilot","first officer"),
-    cabin_crew=c("flight attendant","attendant","cabin crew"),
-    atc=c("ATC|tower"),
-    ground_worker=c("ground worker"),
+    cabin_crew=c("flight attendant","attendant","cabin crew","crew"),
+    atc=c("ATC","tower","controller"),
+    ground_worker=c("ground worker","luggage handler","technicians"),
     passenger=c("passenger","people"))
   
   
   
   events1=list(
+    `7700`=c("7700"),
     activation=c("activation","activates"),
     alert=c("alert","alarm"),
+    cancel=c("cancels","cancelled"),
+    collision=c("collide","collision","Collision"),
+    near_collision=c("near collision","nearly collided","near miss"),
+    crash=c("crashed","crashes","Crash","crash"),
     decsent=c("descent","descend"),
-    fire=c("flames","fire"),
-    injury=c("injuries","injures","injured"),
+    died=c("died"," dies"),
+    failure=c("failure","failed"),
+    fire=c("flames","fire","Fire","burned"),
+    injury=c("injury","injuries","injures","injured"),
+    lightning=c("lightning","lightening"),
     noise=c("noisy","noise"),
     overrun=c("overran","overrun"),
     smell=c("odour","smell"),
     return=c("return"),
-    divert=c("divert","diversion"))
+    divert=c("divert","diversion"),
+    volcano=c("volcanic","volcano","Volcano"),
+    decompression=c("rapid decompression","sudden decompression"),
+    bird_strike=c("bird strike","bird","struck flock of ducks","bird"),
+    windshear=c("wind shear","windshear"))
   
   events2=list(
     "asymmetry",
     "beeping",
     "bang",
-    "bird",
+    "below minimum safe altitude",
     "blew",
     "burst",
     "breaks",
     "burning",
     "clogged",
     "collapse",
-    "collision",
     "contact",
     "could not retract",
-    "cracked","crashed",
+    "cracked",
     "damage","detached","deployed",
-    "died",
     "disabled","disagree",
     "discrepancy",
     "dislodged",
     "dropped",
     "emergency","error","evacuation","excursion",
     "exposed",
-    "failure","fault","fire","flamed out",
+    "fault","flamed out",
     "generator",
     "go around",
     "fell",
-    "flames",
     "fumes",
     "hail strike",
     "heaviness",
     " hit",
+    "hole",
     "impacted","incapacitated","incursion","indication",
+    "inspection",
     "issue",
-    "ill",
+    " ill",
     "jammed",
     "killed",
     "leak",
-    "lightning",
     "locked",
-    "loss of",
+    "load shift",
+    "loss of power",
     "loss of separation",
     "lost power",
     "lost height",
+    "maintenance",
     "malfunction",
-    "near collision",
+    "mismatch",
     "opened",
-    "overflew","overheat",
+    "overflew","overheat","overload","overspeed",
     "pressure","pressurize",
-    "problem","rejected","returned",
+    "problem",
+    "ran off",
+    "rejected","returned",
+    "runway incursion",
     "separated","shot","shut down","smoke","stall",
     "stick shaker",
+    "tailstrike",
     "TCAS",
     "touched down short of runway",
     "trouble",
     "turbulence",
     "thermal runaway",
     "scrape",
+    "skidded",
+    "snow",
     "sparks",
-    "strike",
+    "stuck",
+    "UAV",
     "veered off","vibrations",
     "wake turbulence",
-    "warning")
+    "warning",
+    "windshear")
   
-  adjectives1=list(instability=c("stabilisation","unstable"))
+  adjectives1=list(instability=c("stabilisation","unstable"),
+                   uncommanded=c("uncommanded"),
+                   erroneous=c("erroneous","incorrect","wrong"))
   
   adjectives2=list(
-    "hard","incorrect","insufficient",
+    "hard","insufficient",
+    "medical",
+    "severe",
     "unidentified","unreliable","unsafe",
-    "unusual","wrong")
+    "unusual",
+    "unplanned",
+    "without clearance")
   
   
   ## ac_condition
@@ -169,7 +222,10 @@
     ice=" ice", altitude=c("altitude","height"),
     speed=c("airspeed","speed"),
     attitude="attitude",
-    angle="angle",thrust="thurst")
+    angle="angle",
+    performance="performance",
+    pitch="pitch",
+    thrust="thurst")
 }
 
 
@@ -449,19 +505,43 @@ AIRCRAFT_SEARCH_STRINGS=list(
     "Tu-154 family"=list("T154"=c("T154","Tu-154","TU-154","TU-154M","TU154M")),
     "Tu-204 family"=list("T204"=c("T204","T-204","T214"))),
   
-  
   yakovlev=list("YK40 family"=list("YK40"=c("YK40","YK42"))),
-  
   
   xian=list(
     "MA60 family"=list("MA60"="MA60"))
 )
 
-
+## incomplete
 AIRLINES=list(
-  "1time","1Time","9 Air","ABS","ABX","ABX Air","ACT","ACT Airlines","ADA","Adam Air","ADC","Adria","Aegean","Aer Arann","Aer Caribe","Aer Lingus",
-  "AerCaribe","Aero Charter","Aero Contractors","Aero Republica","Aero Services","Aerocaribbean","Aerocon","Aerocondor","AeroContractors","Aerodynamics",
-  "Aeroflot","Aerogal","Aerolift","Aerolineas","Aerologic","Aeromar","Aeromexico","Aeromexico Connect","Aeropostal","Aeroregional","Aeroservice","Aerostan",
+  "1time"=c("1time","1Time"),
+  "9 Air"="9 Air",
+  "ABS"="ABS",
+  "ABX Air"=c("ABX","ABX Air"),
+  "ACT"=c("ACT","ACT Airlines"),
+  "ADA"="ADA",
+  "Adam Air"="Adam Air",
+  "ADC"="ADC",
+  "Adria"="Adria",
+  "Aegean"="Aegean",
+  "Aer Arann"="Aer Arann",
+  "Aer Lingus"="Aer Lingus",
+  "AerCaribe"=c("AerCaribe","Aer Caribe"),
+  
+  "Aero Charter"="Aero Charter",
+  "Aero Contractors"=c("Aero Contractors","AeroContractors"),
+  "Aero Republica"="Aero Republica",
+  "Aero Services"="Aero Services",
+  "Aerocaribbean"="Aerocaribbean",
+  "Aerocon"="Aerocon",
+  "Aerocondor"="Aerocondor",
+  # ,"Aerodynamics",
+  "Aeroflot"="Aeroflot",
+  "Aerogal"="Aerogal",
+  "Aerolift"="Aerolift",
+  # "Aerolineas",
+  "Aerologic"="Aerologic",
+  "Aeromar"="Aeromar",
+  "Aeromexico","Aeromexico Connect","Aeropostal","Aeroregional","Aeroservice","Aerostan",
   "Aerosucre","Aerosur","AeroSur","Aerosvit","Aerotrans Cargo","AeroUnion","Africa Airlines","Afriqiyah","Agni","Aigle Azur","Air Algerie","Air Antilles",
   "Air Arabia","Air Asia","Air Astana","Air Atlanta Icelandic","Air Austral","Air Baltic","Air Berlin","Air Blue","Air Bridge Cargo","Air Burkina","Air Busan",
   "Air Canada","Air Central","Air China","Air Comet","Air Contractors","Air Corsica","Air Creebec","Air Do","Air Dolomiti","Air Europa","Air Europe","Air Finland",
