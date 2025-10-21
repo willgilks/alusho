@@ -1,9 +1,12 @@
-
-
-
+library("tidyverse")
+library("countrycode") ## match cities to countries
 # library("maps") # world map ggplot
+library("tidyverse")
+library("httr")
 
-## reference data
+source("./R/constants.R")
+source("./R/avfuns.R")
+
 
 ## prep city and airport info for geo assignment
 world_cities=tibble(maps::world.cities) 
@@ -34,7 +37,7 @@ ac_type_lookup_table=make_ac_type_lookup(ac_type_input_list=AIRCRAFT_SEARCH_STRI
 from_date=earliest_test_date
 loop_dates=seq.Date(from=base::as.Date(from_date),to=Sys.Date(),by="1 year")
 
-# raw_data=read_csv("./avh_raw_data.csv")
+raw_data=read_csv("./avh_raw_data.csv",show_col_types=FALSE)
 
 # raw_data=bind_rows(lapply(loop_dates,function(loop_date){
 #   loop_date_end=loop_date+365
@@ -57,52 +60,49 @@ data_with_ac_info=deduped_data|>
   mutate(match=purrr::map(orig_text,~extract_aircraft(.x,lookup_tbl=ac_type_lookup_table)))|>
   unnest(match)
 
-initial_carrier_info=data_with_ac_info |> 
-  rowwise() |> 
-  mutate(carrier=trimws(sub(paste0(reported_ac_name[1],".*"),"",orig_text))) |> 
-  ungroup() |> 
-  select(carrier,reported_ac_name,orig_text) |> 
-  mutate(carrier=gsub(" at .*| on .*| in .*| over .*| near .*","",carrier)) |> 
-  mutate(carrier=str_to_lower(carrier)) |> 
-  group_by(carrier) |> 
-  mutate(carrier_n=n()) |> 
-  ungroup() |> 
-  # filter(carrier_n>=5) |> 
+
+## make provisional carrier names
+initial_carrier_info=data_with_ac_info|>
+  rowwise()|>
+  mutate(carrier=trimws(sub(paste0(reported_ac_name[1],".*"),"",orig_text)))|>
+  ungroup()|>
+  select(carrier,reported_ac_name,orig_text)|>
+  mutate(carrier=str_to_lower(carrier))|>
+  mutate(carrier=gsub("[[:space:]]at[[:space:]].*|
+[[:space:]]on[[:space:]].*|
+[[:space:]]in[[:space:]].*|
+[[:space:]]over[[:space:]].*|
+[[:space:]]near[[:space:]].*","",carrier))|>
+  group_by(carrier)|>
+  mutate(carrier_n=n())|>
   ungroup()
-sort(unique(initial_carrier_info$carrier))
 
-filtered_carrier_dat=initial_carrier_info |> 
-  filter(carrier_n>5) |> 
-  select(carrier) |> distinct() |> pull()
 
+## make list of believable carrier names
+filtered_carrier_dat=initial_carrier_info|>
+  filter(carrier_n>5|grepl("airlines|airways",carrier,ignore.case = T))|>
+  select(carrier)|>distinct()|>pull()
+
+## grepl for likely carrier names.
 ## test the original text for occurrence of the patterns
 reassigned_carriers_dat=bind_rows(lapply(split(initial_carrier_info,initial_carrier_info$carrier), function(row_df){
-  
-  print(row_df)
+  # print(row_df)
   bind_rows(lapply(filtered_carrier_dat,function(z){
     if (grepl(paste0(paste0(z,"$"),"|",paste0(z," ")),row_df$carrier[1])){
       row_df |> 
         mutate(assigned_carrier=z)
     }
   }))
-}))
-
-# airlines=c("British Airways|BA","Delta|DL","Air France|AF","Lufthansa|LH")
-pig=initial_carrier_info |> 
-  mutate(
-  c2=str_extract(carrier,str_c("(?i)",str_c(filtered_carrier_dat,collapse="|")))
-)
-
-data_with_carrier |> 
-  select(carrier,carrier_n) |> 
-  distinct() |> 
-  view()
+})) |> 
+  select(orig_text,assigned_carrier) |> 
+  distinct()
 
 
 
 ## extract event location info #####
 ## separate out location prepositions near/at/overhead, and likely location string
 locs_data=extract_location(deduped_data,city_names=NULL)
+
 
 ## extract remaining info and assign geo coords and country
 data_with_locs_and_geos=cleanup_location_extraction(
@@ -119,74 +119,56 @@ data_with_estimated_dates=extract_and_estimate_dates(deduped_data)
 ## extract details #####
 ## extract stage of flight info, aircraft parts, people involved, verbs, adjectives, aicraft condition.
 ## make columns summarising common events
-dat_with_times=make_label_column(input_df=deduped_data,new_column_name=flight_stage,str_list1=times1,str_list2=NULL)
-dat_with_ac_parts=make_label_column(input_df=dat_with_times,new_column_name=ac_part,str_list1=ac_parts1,str_list2=ac_parts2)
-dat_with_people=make_label_column(input_df=dat_with_ac_parts,new_column_name=persons,str_list1=people1,str_list2=NULL)
-dat_with_verb=make_label_column(input_df=dat_with_people,new_column_name=verb,str_list1=events1,str_list2=events2)
-dat_with_adjectives=make_label_column(input_df=dat_with_verb,new_column_name=adjective,str_list1=adjectives1,str_list2=adjectives2)
-dat_with_ac_condition=make_label_column(input_df=dat_with_adjectives,new_column_name=ac_condition,str_list1=ac_condition1,str_list2=NULL)
-
+{
+  dat_with_times=make_label_column(input_df=deduped_data,new_column_name=flight_stage,str_list1=times1,str_list2=NULL)
+  dat_with_ac_parts=make_label_column(input_df=dat_with_times,new_column_name=ac_part,str_list1=ac_parts1,str_list2=ac_parts2)
+  dat_with_people=make_label_column(input_df=dat_with_ac_parts,new_column_name=persons,str_list1=people1,str_list2=NULL)
+  dat_with_verb=make_label_column(input_df=dat_with_people,new_column_name=verb,str_list1=events1,str_list2=events2)
+  dat_with_adjectives=make_label_column(input_df=dat_with_verb,new_column_name=adjective,str_list1=adjectives1,str_list2=adjectives2)
+  dat_with_ac_condition=make_label_column(input_df=dat_with_adjectives,new_column_name=ac_condition,str_list1=ac_condition1,str_list2=NULL)
+}
 
 ## maybe for each word, assess the possibility that it's an aircraft., e.g. by length, and composition of letters, numbers and special.
 
-word_compos_dat=bind_rows(lapply(split(deduped_data,deduped_data$orig_text), function(df_row){
-  
-  text_vec=df_row$orig_text
-  print(text_vec)
-  banana=strsplit(text_vec,"\\s+")
-  
-  bind_rows(lapply(banana,function(z){
-    tibble(word=z,
-           nalpha=str_count(z,"[[:alpha:]]"),
-           npunc=str_count(z,"[[:punct:]]"),
-           nnum=str_count(z,"[[:number:]]"))|>
-      mutate(pos=row_number(),
-             orig_text=text_vec[1]) |> 
-      mutate(wlen=nalpha+npunc+nnum) |> 
-      mutate(prop_alpha=nalpha/wlen,prop_num=nnum/wlen) |> 
-      mutate(is_day=if_else(wlen>2&wlen<10&grepl("1st$|1nd$|2nd$|3nd$|3rd$|4rd$|[0-9]th$",word)&!grepl("-",word),TRUE,FALSE))
-    
-  }))
-}))
+# word_compos_dat=bind_rows(lapply(split(deduped_data,deduped_data$orig_text), function(df_row){
+#   
+#   text_vec=df_row$orig_text
+#   print(text_vec)
+#   banana=strsplit(text_vec,"\\s+")
+#   
+#   bind_rows(lapply(banana,function(z){
+#     tibble(word=z,
+#            nalpha=str_count(z,"[[:alpha:]]"),
+#            npunc=str_count(z,"[[:punct:]]"),
+#            nnum=str_count(z,"[[:number:]]"))|>
+#       mutate(pos=row_number(),
+#              orig_text=text_vec[1]) |> 
+#       mutate(wlen=nalpha+npunc+nnum) |> 
+#       mutate(prop_alpha=nalpha/wlen,prop_num=nnum/wlen) |> 
+#       mutate(is_day=if_else(wlen>2&wlen<10&grepl("1st$|1nd$|2nd$|3nd$|3rd$|4rd$|[0-9]th$",word)&!grepl("-",word),TRUE,FALSE))
+#     
+#   }))
+# }))
+# filterd_ac_dat=word_compos_dat |> 
+#   filter(prop_alpha>.05,prop_alpha<.75,prop_num>.2,prop_num<.9) |> 
+#   filter(is_day==FALSE) |> 
+#   filter(npunc==0|grepl("-",word)) |> 
+#   select(orig_text,word,prop_alpha,prop_num,word,wlen,pos) |> 
+#   distinct() |> 
+#   group_by(word) |> 
+#   mutate(word_n=n()) |> 
+#   ungroup()
 
 
-
-
-filterd_ac_dat=word_compos_dat |> 
-  filter(prop_alpha>.05,prop_alpha<.75,prop_num>.2,prop_num<.9) |> 
-  filter(is_day==FALSE) |> 
-  filter(npunc==0|grepl("-",word)) |> 
-  select(orig_text,word,prop_alpha,prop_num,word,wlen,pos) |> 
-  distinct() |> 
-  group_by(word) |> 
-  mutate(word_n=n()) |> 
-  ungroup()
-
-filterd_ac_dat |> 
-  select(word,word_n) |> 
-  distinct() |> 
-  view()
-
-hist(unique(filterd_ac_dat$word_n))
-sort(unique(filterd_ac_dat$word))
-
-ggplot(
-  filterd_ac_dat,aes(prop_alpha,prop_num))+
-  # geom_point()+
-  geom_text(aes(label=word))
-
-
-dat_with_ac_condition |> 
-  select(orig_text) |> 
-  # mutate(pcol=word(orig_text,1,2)) |> 
-  # mutate(pcol2=gsub("DC[0-9].*|DC-[0-9].*|MD-[0-9].*|B7.*|A3.*|AN[1-9]|ATR[1-9].*","",pcol)) |> 
-  select(pcol2) |> 
-  arrange(pcol2) |> 
-  distinct() |> pull()
 ## make an event label
 ## join other extraction tables.
 ## make nice column names
 dat_fin=dat_with_ac_condition|>
+  mutate(flight_stage=gsub("^;|;$","",flight_stage),
+         ac_part=gsub("^;|;$","",persons),
+         verb=gsub("^;|;$","",verb),
+         adjective=gsub("^;|;$","",adjective),
+         ac_condition=gsub("^;|;$","",ac_condition)) |> 
   rowwise()|>
   mutate(event_lab=paste0(c(flight_stage,ac_part,persons,verb,adjective,ac_condition),collapse=";"))|>
   ungroup()|>
@@ -194,11 +176,20 @@ dat_fin=dat_with_ac_condition|>
   mutate(event_lab=gsub("[;][;]",";",event_lab))|>
   mutate(event_lab=gsub("^[;]|[;]$","",event_lab))|>
   full_join(data_with_estimated_dates,by=join_by(orig_text,reporting_date),relationship="many-to-many")|>
+  full_join(reassigned_carriers_dat,by = join_by(orig_text),relationship = "many-to-many") |>
+  full_join(data_with_ac_info,by=join_by(orig_text,reporting_date),relationship="many-to-many") |> 
   full_join(data_with_locs_and_geos,by=join_by(orig_text,reporting_date),relationship="many-to-many")|>
-  full_join(data_with_ac_info,by=join_by(orig_text,reporting_date),relationship="many-to-many")|>
+  ungroup()|>
   select(report_date=reporting_date,
+         flight_stage,
          report_text=orig_text,
          event_date,date_source,
+         assigned_carrier,
+         ac_manufacturer=manufacturer,
+         ac_family,
+         ac_standard_name=standardised_ac_name,
+         ac_reported_name=reported_ac_name,
+         ac_number_of_ac=num_aircraft,
          geo_loc=location,
          geo_loc_ind=location_ind,
          geo_loc2=location2,
@@ -206,14 +197,15 @@ dat_fin=dat_with_ac_condition|>
          geo_iso_code=iso_code,
          geo_country=country,
          geo_lat=lat,geo_long=long,
-         ac_manufacturer=manufacturer,
-         ac_family,
-         ac_standard_name=standardised_ac_name,
-         ac_reported_name=reported_ac_name,
-         ac_number_of_ac=num_aircraft)|>
+         descr_stage=flight_stage,
+         descr_part=ac_part,
+         descr_action=verb,
+         descr_adjective=adjective,
+         descr_condition=ac_condition)|>
   ungroup()
 
-
+# dat_fin
+# write_csv(dat_fin,"./avh_processed_20251021.csv")
 
 # write_csv(pig_parsed,"~/Desktop/pig_parsed.csv")
 

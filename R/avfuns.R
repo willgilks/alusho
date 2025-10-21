@@ -1,7 +1,7 @@
 
 library("tidyverse")
 # library("rvest") ## pull url
-# library("countrycode") ## match cities to countries
+library("countrycode") ## match cities to countries
 library("tidyverse")
 library("httr")
 
@@ -83,7 +83,7 @@ make_label_column=function(input_df,new_column_name,str_list1,str_list2){
     mutate({{new_column_name}}:=as.character("")) 
   
   for (kw in names(comb_list)) {
-    print(kw)
+    # print(kw)
     df_with_new_column=df_with_new_column |> 
       rowwise() |> 
       mutate({{new_column_name}}:=ifelse(str_detect(orig_text,comb_list[[kw]]),trimws(paste0(c({{new_column_name}},kw),collapse=";")),{{new_column_name}})) |> 
@@ -402,7 +402,7 @@ cleanup_location_extraction=function(
            lat=if_else(is.na(lat)&!is.na(lat2),lat2,lat),
            long=if_else(is.na(long)&!is.na(long2),long2,long))|>
     select(-c(country2,lat2,long2))|>
-    mutate(iso_code=countrycode(country,origin="country.name",destination="iso3c",warn=FALSE))|>
+    mutate(iso_code=countrycode::countrycode(country,origin="country.name",destination="iso3c",warn=FALSE))|>
     mutate(iso_code=if_else(is.na(iso_code),iso_code2,iso_code))|>
     select(-iso_code2)|>
     left_join(city_airport_info,relationship="many-to-many",by = join_by(location2))|>
@@ -413,10 +413,10 @@ cleanup_location_extraction=function(
     select(-c(iso_code2,country2,lat2,long2))|>
     ungroup()|>
     distinct()|>
-    mutate(iso_code2=countrycode(location2,origin="country.name",destination="iso3c",warn=FALSE))|>
+    mutate(iso_code2=countrycode::countrycode(location2,origin="country.name",destination="iso3c",warn=FALSE))|>
     mutate(iso_code=if_else(is.na(iso_code),iso_code2,iso_code))|>
     select(-iso_code2)|>
-    mutate(country2=countrycode(iso_code,origin="iso3c",destination="country.name"))|>
+    mutate(country2=countrycode::countrycode(iso_code,origin="iso3c",destination="country.name"))|>
     mutate(country=if_else(is.na(country),country2,country))|>
     select(-country2)|>
     ungroup()
