@@ -48,13 +48,65 @@ raw_data=read_csv("./avh_raw_data.csv",show_col_types=FALSE)
 
 ## keep earliest reporting data for duplicated reports
 deduped_data=raw_data|>
-  mutate(orig_text=gsub("[[:space:]][[:space:]]","[[:space:]]",orig_text))|>
+  mutate(orig_text=gsub("  "," ",orig_text))|>
+  mutate(orig_text=gsub("  "," ",orig_text))|>
   group_by(orig_text)|>
   filter(reporting_date==min(reporting_date))|>
-  ungroup()
+  ungroup() |> 
+  mutate(lwr_orig_text = str_to_lower(orig_text))|> 
+  arrange(lwr_orig_text) |> 
+  mutate(rn=row_number()) 
+
+
+# AIRLINES
+# panama occurs both as an airline and as a city airport name.
+
+
+with_airlines_data = 
+  bind_rows(
+    lapply(split(deduped_data,deduped_data$rn)[1:100], function(z){
+      
+      print(paste(Sys.time(),z$lwr_orig_text[1]))
+      bind_rows(
+        lapply(AIRLINES, function(i){
+          
+          # print(i)
+          search_term = paste0("^",sort(unique(str_to_lower(i)))," ")
+          
+          if ( isTRUE(grepl(search_term,z$lwr_orig_text[1])) ){
+            z |>
+              mutate(carrier = i[1]) |>
+              ungroup()
+          }
+          
+        })
+      ) |> 
+        distinct()
+    })
+  )
+with_airlines_data
+
+# deduped_data
+## alternative approach
+## insert start and end brackets around what the item is, e.g. carrier, ac type, location adjective, location, date, event text.
+
+
+# Download the OpenFlights airline database
+# Columns: ID, Name, Alias, IATA, ICAO, Callsign, Country, Active
+url <- "https://raw.githubusercontent.com/jpatokal/openflights/master/data/airlines.dat"
+airlines_full <- read_csv(url, col_names = c("id", "name", "alias", "iata", "icao", "callsign", "country", "active"))
+
+# Filter for relevant columns and clean data
+airlines_clean <- airlines_full %>%
+  filter(!is.na(name)) %>%
+  select(standard_name = name, iata, icao, alias) %>%
+  mutate(across(everything(), as.character))
 
 
 
+
+## initial approach
+## 
 ## extract aircraft type info #####
 data_with_ac_info=deduped_data|>
   mutate(match=purrr::map(orig_text,~extract_aircraft(.x,lookup_tbl=ac_type_lookup_table)))|>
@@ -68,16 +120,20 @@ initial_carrier_info=data_with_ac_info|>
   ungroup()|>
   select(carrier,reported_ac_name,orig_text)|>
   mutate(carrier=str_to_lower(carrier))|>
-  mutate(carrier=gsub("[[:space:]]at[[:space:]].*|
-[[:space:]]on[[:space:]].*|
-[[:space:]]in[[:space:]].*|
-[[:space:]]over[[:space:]].*|
-[[:space:]]near[[:space:]].*","",carrier))|>
+  #   mutate(carrier=gsub("[[:space:]]at[[:space:]].*|
+  # [[:space:]]on[[:space:]].*|
+  # [[:space:]]in[[:space:]].*|
+  # [[:space:]]over[[:space:]].*|
+  # [[:space:]]near[[:space:]].*","",carrier))|>
+  mutate(carrier=gsub(" at .*|
+   on .*| in .*| over .*| near .*","",carrier))|>
+  mutate(carrier = gsub("\\[\\[:space:\\]\\]"," ",carrier)) |> 
   group_by(carrier)|>
   mutate(carrier_n=n())|>
   ungroup()
 
 
+initial_carrier_info
 ## make list of believable carrier names
 filtered_carrier_dat=initial_carrier_info|>
   filter(carrier_n>5|grepl("airlines|airways",carrier,ignore.case = T))|>
@@ -97,7 +153,29 @@ reassigned_carriers_dat=bind_rows(lapply(split(initial_carrier_info,initial_carr
   select(orig_text,assigned_carrier) |> 
   distinct()
 
+reassigned_carriers_dat |> 
+  group_by(assigned_carrier) |> 
+  mutate(carrier_n=n()) |> 
+  ungroup() |> 
+  select(assigned_carrier,carrier_n) |> 
+  distinct() |> 
+  view()
+select()
 
+
+## CHECK ISSUES WITH ASSIGNED CARRIER
+## 1.  'wings' should not be a carrier name. german wings ? smart wings ?
+## 2. 'thy' should probably be changed to 'turkish'
+## 3. 'united' vs 'united airlines'.
+## 4. 'delta' vs 'delta airlines'
+## 5. 'france' vs 'air france'
+## 6. virgin vs virgin atlantic vs virgin america
+## 7. germanwings vs german wings  
+## 8. ba vs british airways
+## 9. turkish airlines vs turkish
+## 10. aer lingus vs lingus
+## 11. easyjet vs easyjet europe vs easyjet switzerland
+## 12. avianca braSil vs braZil
 
 ## extract event location info #####
 ## separate out location prepositions near/at/overhead, and likely location string
@@ -211,39 +289,59 @@ dat_fin=dat_with_ac_condition|>
 
 
 names(dat_fin)
-dat_fin |> 
-  select(orig_text,event_lab) |> 
+
+
+
+# Reporting-lag time series #####
+pig_geo=dat_fin |> 
+  mutate(reporting_delay = report_date - event_date) |> 
+  select(geo_lat,geo_long,event_date,reporting_delay,report_text)
+pdat=pig_geo |>
+  # filter(event_date>=Sys.Date()-365) |>
+  select(event_date,reporting_delay,report_text) |>
+  distinct() |>
+  ungroup()
+ggplot(pdat,aes(event_date,reporting_delay))+
+  geom_point()+
+  labs(x="",y="Reporting lag",
+       title="Time delay from event date to reporting date",
+       caption=Sys.Date())
+
+
+## Events map #####
+pdat=pig_geo |>
+  filter(event_date>=Sys.Date()-365) |>
+  mutate(tt_text_part = paste0(c(event_date,"\n",report_text),collapse="")) |> 
+  group_by(geo_lat,geo_long) |>
+  summarise(nr=n(),tt_text = paste0(tt_text_part,collapse="\n"),.groups='drop')
+ggplot(pdat,aes(geo_long,geo_lat))+
+  geom_point(aes(size=nr))+
+  labs(x="",y="",
+       title="Events map",
+       caption=Sys.Date())
+
+
+## airlines
+airlines_dat = dat_fin |> 
+  select(event_date,assigned_carrier,report_text) |> 
   distinct() |> 
-  # filter(event_lab=="") |> 
-  arrange(event_lab) |> view()
+  mutate(assigned_carrier=if_else(is.na(assigned_carrier),"unknown",assigned_carrier)) |> 
+  group_by(assigned_carrier) |> 
+  arrange(event_date,.by_group = TRUE) |> 
+  mutate(event_interval = as.numeric(event_date-lag(event_date))) |>
+  mutate(airline_n = n()) |> 
+  ungroup()
 
+airlines_dat
 
+airlines_pdat = airlines_dat |> 
+  filter(airline_n>290) |> 
+  filter(event_date > "2019-01-01")
 
+ggplot(airlines_pdat,aes(event_date,event_interval))+
+  geom_line()+
+  facet_wrap(fct_reorder(assigned_carrier,airline_n)~.,scales = 'free_y')
 
-
-# # Reporting-lag time series #####
-# pdat=pig_geo |> 
-#   filter(date>=Sys.Date()-365) |> 
-#   select(event_id,date,reporting_delay) |> 
-#   distinct() |> 
-#   ungroup()
-# ggplot(pdat,aes(date,reporting_delay))+
-#   geom_point()+
-#   labs(x="",y="Reporting lag",
-#        title="Time delay from event date to reporting date",
-#        caption=Sys.Date())
-# 
-# 
-# ## Events map #####
-# pdat=pig_geo |> 
-#   filter(date>=Sys.Date()-365) |> 
-#   group_by(lat,long) |> 
-#   summarise(nr=n(),.groups='drop')
-# ggplot(pdat,aes(long,lat))+
-#   geom_point(aes(size=nr))+
-#   labs(x="",y="",
-#        title="Events map",
-#        caption=Sys.Date())
 
 
 

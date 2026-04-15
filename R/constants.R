@@ -513,143 +513,494 @@ AIRCRAFT_SEARCH_STRINGS=list(
 
 ## incomplete
 AIRLINES=list(
-  "1time"=c("1time","1Time"),
-  "9 Air"="9 Air",
-  "ABS"="ABS",
-  "ABX Air"=c("ABX","ABX Air"),
-  "ACT"=c("ACT","ACT Airlines"),
-  "ADA"="ADA",
-  "Adam Air"="Adam Air",
-  "ADC"="ADC",
-  "Adria"="Adria",
-  "Aegean"="Aegean",
-  "Aer Arann"="Aer Arann",
-  "Aer Lingus"="Aer Lingus",
-  "AerCaribe"=c("AerCaribe","Aer Caribe"),
+  "1time",
+  "9 Air",
+  "ABS",
+  c("ABX","ABX Air"),
+  c("ACT","ACT Airlines"),
+  "ADA",
+  "Adam Air",
+  "ADC",
+  "Adria",
+  "Aegean",
+  "Aer Arann",
+  c("Aer Lingus","Lingus"),
+  c("AerCaribe","Aer Caribe"),
+  "Aero Charter",
+  c("Aero Contractors","AeroContractors"),
+  "Aero Republica",
+  "Aero Services",
+  "Aerocaribbean",
+  "Aerocon",
+  "Aerocondor",
+  "Aeroflot","Aerogal","Aerolift",
+  "Aerologic",
+  "Aeromar",
+  c("Aeromexico","Aeromexico Connect"),
+  "Aeropostal","Aeroregional","Aeroservice","Aerostan","Aerosucre","Aerosur","AeroSur","Aerosvit","Aerotrans Cargo","AeroUnion","Africa Airlines","Afriqiyah","Agni","Aigle Azur",
+  c("Air Algerie","Algerie"),"Air Antilles",
+  "Air Arabia",
+  c("Air Asia","AirAsia"),
+  "Air Astana","Air Atlanta Icelandic","Air Austral","Air Baltic","Air Berlin","Air Blue","Air Bridge Cargo","Air Burkina","Air Busan",
+  "Air Canada",
+  "Air Central",
+  "Air China",
+  "Air Comet","Air Contractors","Air Corsica","Air Creebec","Air Do","Air Dolomiti","Air Europa","Air Europe","Air Finland",
+  c("Air France","France"),
+  "Air Georgian","Air Greenland","Air Iceland",
   
-  "Aero Charter"="Aero Charter",
-  "Aero Contractors"=c("Aero Contractors","AeroContractors"),
-  "Aero Republica"="Aero Republica",
-  "Aero Services"="Aero Services",
-  "Aerocaribbean"="Aerocaribbean",
-  "Aerocon"="Aerocon",
-  "Aerocondor"="Aerocondor",
-  # ,"Aerodynamics",
-  "Aeroflot"="Aeroflot",
-  "Aerogal"="Aerogal",
-  "Aerolift"="Aerolift",
-  # "Aerolineas",
-  "Aerologic"="Aerologic",
-  "Aeromar"="Aeromar",
-  "Aeromexico","Aeromexico Connect","Aeropostal","Aeroregional","Aeroservice","Aerostan",
-  "Aerosucre","Aerosur","AeroSur","Aerosvit","Aerotrans Cargo","AeroUnion","Africa Airlines","Afriqiyah","Agni","Aigle Azur","Air Algerie","Air Antilles",
-  "Air Arabia","Air Asia","Air Astana","Air Atlanta Icelandic","Air Austral","Air Baltic","Air Berlin","Air Blue","Air Bridge Cargo","Air Burkina","Air Busan",
-  "Air Canada","Air Central","Air China","Air Comet","Air Contractors","Air Corsica","Air Creebec","Air Do","Air Dolomiti","Air Europa","Air Europe","Air Finland",
-  "Air France","Air Georgian","Air Greenland","Air Iceland","Air India","Air Inuit","Air Italy","Air KBZ","Air Macau","Air Malta","Air Mauritius","Air Mediterranee",
+  
+  c("Air India","India","India Express","India Regional","Indian Airlines"),
+  
+  
+  "Air Inuit","Air Italy","Air KBZ","Air Macau","Air Malta","Air Mauritius","Air Mediterranee",
   "Air Moorea","Air Namibia","Air Nelson","Air New Zealand","Air Niamey","Air Nippon","Air Nippon Network","Air North","Air Nostrum","Air One","Air Pacific",
   "Air Seychelles","Air Southwest","Air Tanzania","Air Transat",
   
-  "Air Transport International","Air Wisconsin","Air Zimbabwe","AirAsia","AirBaltic","Airblue","AirBlue","AirBridgeCargo","Airbus","Aircalin","Aires","Airest",
-  "AirExplore","Airlin","Airlinair","Airlink","Airnorth","Airphilexpress","Airtran","AirTran","Airwork","Ajet","Ak Bars","Akasa","Alaska","Alaska Airlines",
-  "Albastar","Alfa Airlines","Algerie","Aliansa","Alitalia","ALK","Alkan","All Nippon","Allegiant","Alliance","Allied Cargo","Alma de Mexico","Aloha Cargo",
-  "Alrosa","Amakusa Airlines","Amapola","Amaszonas","AMC","Amelia","American","American Airlines","American Eagle","Ameriflight","Amerijet","ANA","Anadolu",
-  "Anadolujet","Andes","Angara","Antonov","ANZ","Arabia","Arann","Argentinas","Ariana","Arik","Arik Air","Arkefly","Arkia","Armavia","Arrow Cargo","AS Avies",
-  "Aseman","Aserca","Asia India","Asia Pacific Airlines","Asian Spirit","Asiana","ASL","ASL Belgium","ASL France","Astana","Astra","Astraeus","Astral","Ata","ATA",
-  "ATI","Atlanta","Atlanta Icelandic","Atlantic","Atlantic Airways","Atlas","Atlasglobal","AtlasGlobal","Atlasjet","Atrak","Atran","Augsburg","Aurela","Aurigny",
+  "Air Transport International","Air Wisconsin","Air Zimbabwe",
+  "AirBaltic","Airblue","AirBlue","AirBridgeCargo",
+  "Airbus",
+  "Aircalin","Aires","Airest",
+  "AirExplore",
+  
+  c("Airlin","Airlinair"),
+  "Airlink","Airnorth","Airphilexpress",
+  
+  c("Airtran","AirTran"),
+  "Airwork","Ajet","Ak Bars","Akasa",
+  
+  c("Alaska","Alaska Airlines"),
+  "Albastar","Alfa Airlines","Aliansa","Alitalia","ALK","Alkan",
+  c("All Nippon","ANA"),
+  "Allegiant","Alliance","Allied Cargo","Alma de Mexico","Aloha Cargo",
+  "Alrosa","Amakusa Airlines","Amapola","Amaszonas","AMC","Amelia",
+  c("American","American Airlines","American Eagle"),
+  "Ameriflight","Amerijet",
+  
+  "Anadolu","Anadolujet",
+  
+  "Andes","Angara","Antonov",
+  c("ANZ","Air New Zealand"),
+  "Arabia","Arann","Argentinas","Ariana","Arik","Arik Air","Arkefly","Arkia","Armavia","Arrow Cargo","AS Avies",
+  "Aseman","Aserca","Asia India","Asia Pacific Airlines","Asian Spirit","Asiana",
+  c("ASL","ASL Belgium","ASL France"),
+  "Astana","Astra","Astraeus","Astral",
+  c("Ata","ATA"),
+  "ATI","Atlanta","Atlanta Icelandic","Atlantic","Atlantic Airways",
+  c("Atlas","Atlasglobal","AtlasGlobal","Atlasjet"),
+  "Atrak","Atran","Augsburg","Aurela",
+  "Aurigny",
   "Aurora","Austral","Australian Air Express",
+  "Austrian",
+  "Avelo","Avia Traffic",
+  "Avianca",
+  "Aviastar","Avion Express","Avior","Avitrans","AZAL",
+  c("Azerbaijan","Azerbaijan Airlines"),
+  "Azimuth","Azman","Azores","Azul","Azur",
   
-  
-  "Austrian","Avelo","Avia Traffic","Avianca","Aviastar","Avion Express","Avior","Avitrans","AZAL","Azerbaijan","Azerbaijan Airlines","Azimuth","Azman",
-  "Azores","Azul","Azur","BA","Badr","Bagan","Bahamas","Bahamasair","Balkan Holidays","Baltic","Bangkok","Batavia","Batik","BAW","Bearskin","Bek","Belair",
+  # B
+  "Badr","Bagan","Bahamas","Bahamasair","Balkan Holidays","Baltic","Bangkok","Batavia","Batik","Bearskin","Bek","Belair",
   "Belavia","Belgium","Bellview Airlines","Berlin","Berry","BH Air","BH Airlines","Bhutan","Biman","BinAir","Binter","Binter Canarias","Blue","Blue1","Bluebird",
-  "Bluebird Cargo","bmi","BMI","bmibaby","BoA","Boeing","Boliviana","Botswana","Braathens","Bradley","Bratsk","Bravo","Breeze","Bridge Cargo","Brit Air","Britair",
-  "BritAir","British Airway","British Airways","British Midland","Brussels","Brussels Airlines","Budapest","Budapest Air","Buddha","Buffalo","Bukovyna","Bulgaria",
-  "Bulgaria Air","Bulgarian Air Charter","Bulgarian Charter","Busan","Busy Bee","Buzz","CAA","Cairo","Caledonie","Calm","Calm Air","Camair","Canada","Canadian North",
-  "Canjet","Capital Beijing","Caraibes","Cargo","Cargojet","Cargologic","Cargolux","Caribbean","Carpat","Carpatair","Caspian","Cathay","Cavok",
+  "Bluebird Cargo","bmi","BMI","bmibaby","BoA","Boeing","Boliviana","Botswana","Braathens","Bradley","Bratsk","Bravo","Breeze","Bridge Cargo",
+  c("Brit Air","Britair","BritAir"),
+  c("British Airways","British Airway","BAW","BA"),
+  "British Midland","Brussels","Brussels Airlines","Budapest","Budapest Air","Buddha","Buffalo","Bukovyna","Bulgaria",
+  "Bulgaria Air","Bulgarian Air Charter","Bulgarian Charter","Busan","Busy Bee","Buzz",
+  
+  # C
+  "CAA","Cairo","Caledonie","Calm","Calm Air","Camair","Canada","Canadian North",
+  "Canjet","Capital Beijing","Caraibes","Cargojet","Cargologic","Cargolux","Caribbean","Carpat","Carpatair","Caspian","Cathay","Cavok",
   
   "Cayman","CCM","Cebu","Cebu Pacific","Cem","Cemair","CemAir","Central Mountain","Centralwings","Centurion","Chair","Chalair","Cham Wings","Chanchangi","Chautauqua",
   "Chengdu","China Airlines","China Cargo","China Eastern","China Express","China Southern","China United","Chrono","Chukotavia","Cimber","Cirrus","Citilink",
   "City Airline","City Airlines","City Star Airlines","Cityjet","CityJet","Citywing","Click Mexicana","Cobham","Colgan","Comair","Commut","Commutair","CommutAir",
   "Commute","Compagnie Africaine Aviation","Compass","Condor","ConocoPhillips","Contact","Contact Air","Continental","Contour","Conviasa","Copa","COPA","Corendon",
-  "Corendon Airlines","Corporate Airlines","Corsair","Corsica","Creebec","Croatia","Croatia Airlines","CSA","Cubana","Cyprus","Czech Airlines","Daallo","Daghestan",
+  "Corendon Airlines","Corporate Airlines","Corsair","Corsica","Creebec","Croatia","Croatia Airlines","CSA","Cubana","Cyprus","Czech Airlines",
+  
+  # D
+  "Daallo","Daghestan",
   "Daily","Dana","DANA","Danish Air Transport","Danu","Darwin","DAT","Delays","Delta","Delta Airlines","Denim Air","Deraya","DHL","Discover","Dniproavia","Dolomiti",
-  "Donavia","Donbassaero","Dragon","Dragonair","Druk","Druk Air","Dynamic","Dynamic Airlines","Eagle","Eagle Air","Eastar","Eastern","Easyfly","Easyjet","EasyJet",
-  "EAT","Edelweiss","Egypt",
+  "Donavia","Donbassaero","Dragon","Dragonair","Druk","Druk Air","Dynamic","Dynamic Airlines",
   
-  "Egypt Air","Egypt Express","Egyptair","EgyptAir","El Al","Elal","Electra","Ellin","Emerald","Emirates","Empire Airlines","Endeavor","Enter","Envoy","Era","Estelar",
-  "Estonian","Ethiopian","Ethiopian Airlines","Etihad","Euro Atlantic","Euroatlantic","Eurofly","Eurolot","Europa","Europe Airpost","European Air Charter",
-  "European Air Transport","European Charter","Eurowings","Eva","EVA","Evergreen","Everts","Exin","Exploits Valley","Express","Expressjet","ExpressJet",
-  "FAA fines American Airlines","Far Eastern","Farnair","Fastjet","FAT","Fedex","FedEx","Fiji","Finnair","Finncomm","Fire","Firefly","First","Flair","Fleet",
-  "Flightline","Fly Africa","Fly540","Flybe","FlyBe","FlyBE","Flybondi","Flydubai","FlyDubai","Flyegypt","FlyEgypt","FlyGeorgia","Flyglobespan","Flynas","FlyNAS",
-  "Flysafair","Four Star Cargo","France","Freedom","Frontier","Fuji Dream","Garuda","Gazprom","Gazpromavia","Georgian","German","German Airways","Germania",
-  "Germanwings","Global Air","Global Aviation","Globus","GMG","Go","Go2Sky","GoAir","Gojet","GoJet","Gol","GOL","Golden","Golden Air","Goma","Gomair",
-  "Great Lakes","Great Wall Airlines",
+  # E
+  c("Eagle","Eagle Air"),
+  "Eastar","Eastern","Easyfly",
+  c("Easyjet","EasyJet"),
+  "EAT","Edelweiss",
+  c("Egypt Air","Egypt","Egyptair","EgyptAir"),
+  "Egypt Express",
+  c("El Al","Elal"),
+  "Electra","Ellin","Emerald","Emirates","Empire Airlines","Endeavor","Enter","Envoy","Era","Estelar","Estonian",
+  c("Ethiopian","Ethiopian Airlines"),
+  "Etihad",
+  c("Euro Atlantic","Euroatlantic"),"Eurofly","Eurolot","Europa","Europe Airpost","European Air Charter",
+  "European Air Transport","European Charter","Eurowings",
+  c("Eva","EVA"),
+  "Evergreen","Everts","Exin","Exploits Valley","Express",
+  c("Expressjet","ExpressJet"),
+  "Far Eastern","Farnair","Fastjet","FAT","Fedex","FedEx","Fiji","Finnair","Finncomm","Firefly","First","Flair","Fleet","Flightline","Fly Africa","Fly540",
+  c("Flybe","FlyBe","FlyBE"),
+  "Flybondi","Flydubai","FlyDubai",
+  c("Flyegypt","FlyEgypt"),
+  "FlyGeorgia","Flyglobespan",
+  c("Flynas","FlyNAS"),
+  "Flysafair","Four Star Cargo","Freedom","Frontier","Fuji Dream",
   
-  "Greenland","Grozny","Grozny Avia","Guicango","Gulf","Gulf Air","Hainan","Hainan Airlines","Hawaiian","Hawkair","Helvetic","Hemus","Henan Airlines","Hermes",
-  "Hevilift PNG","Hewa Bora","Hifly","HiFly","HK Express","Hokkaido","Hola Airlines","Hong Kong","Hongkong Airlines","Hop","HOP","Horizon","Horizon Air",
-  "Horizont","iAero","IBC","Iberia","Iberworld","Ibex","Iceland","Icelandair","IFL","iFly","IFly","Ikar","India","India Express","India Regional","Indian Airlines",
+  ## G
+  "Garuda",
+  c("Gazprom","Gazpromavia"),
+  "Georgian","German","German Airways","Germania","Germanwings","Global Air","Global Aviation","Globus","GMG",
+  "Go2Sky",
+  c("GoAir","Go"),
+  c("Gojet","GoJet"),
+  c("Gol","GOL"),
+  c("Golden","Golden Air"),
+  c("Goma","Gomair"),
+  "Great Lakes","Great Wall Airlines","Greenland",
+  c("Grozny","Grozny Avia"),
+  "Guicango",
+  c("Gulf","Gulf Air"),
+  c("Hainan","Hainan Airlines"),"Hawaiian","Hawkair","Helvetic","Hemus","Henan Airlines","Hermes",
+  "Hevilift PNG","Hewa Bora","Hifly","HiFly","HK Express","Hokkaido","Hola Airlines",
+  c("Hongkong Airlines","Hong Kong"),
+  c("Hop","HOP"),
+  c("Horizon","Horizon Air","Horizont"),
+  "iAero","IBC","Iberia","Iberworld","Ibex",
+  
+  c("Iceland","Icelandair"),
+  
+  "IFL",
+  
+  c("iFly","IFly"),
+  
+  "Ikar",
+  
+  # c("Air India","India","India Express","India Regional","Indian Airlines"),
+  
   "Indigo","IndiGo","Indonesia AirAsia","Insel","Interjet","Intersky","Inuit","IrAero","Iran","Iran Airtours","Iraqi","IRS","Islena Airlines","Israir","ITA",
-  "Itali Airlines","ItAli Airlines","Itapemirim","Itek Air","Izhavia","Izmir Airlines","JAC","Jade Cargo","JAL","Jambo","Japan","JAT","JAT Airways","Jayawijaya",
-  "Jazeera","Jazz","Jeju","Jet Airways","Jet Time","Jet Time Finland","jet2","Jet2","Jet4You","Jetairfly","Jetblue","Jetconnect","Jetgo","JetKonnect","Jetlink",
+  
+  c("Itali Airlines","ItAli Airlines"),
+  
+  "Itapemirim","Itek Air","Izhavia","Izmir Airlines","JAC","Jade Cargo","JAL","Jambo","Japan","JAT","JAT Airways","Jayawijaya",
+  "Jazeera","Jazz","Jeju","Jet Airways","Jet Time","Jet Time Finland",
+  
+  c("jet2","Jet2"),
+  
+  c("Jet4You","Jetairfly"),
+  
+  "Jetblue",
+  
+  "Jetconnect","Jetgo","JetKonnect","Jetlink",
   "Jetlite","Jetsmart","Jetstar","Jettime","Jetways","JetX","Jin","Jinnah","Jonika","Joon","Jordan","Jota","Joy",
   
   
-  "JSX","Jubba","Juneyao","Kabo","Kalitta","Kalstar","Kam Air","Karun","Kasai","Katekavia","KayaAirlines","KD Avia","Keewatin","Kelowna","Kenn Borek","Kenya",
-  "Key Lime","Khabarovsk","Khors","Kingfisher","Kish","Kish Air","Klasjet","KLM","Kolavia","Komiaviatrans","Korean","Korean Air","Korean Airlines",
-  "Korean Airlines B777","Koryo","Krasavia","Kuban","Kulula","Kunming","Kuwait","Kyrgyzstan Airlines","LAM","LAN","Lanhsa","Lao","Laser","LATAM","Lauda Europe",
-  "Laudamotion","LC Busre","LGW","LGW Walter","LH Cityline","LIAT","Libyan","Libyan Arab","Lift","Lingus","Link","Lion","Lionair","Livingston","Logan","Loganair",
-  "Longtail","LOT","LTE","LTU","Lufthansa","Lux","Luxair","Lynx","Madagascar","Magnicharters","Mahan","Malaysia","Malaysian","Maldivian","Maldivian Air Taxi",
-  "Maleth","Malev","Malindo","Malmo","Malmo Aviation","Malta","Malu","Mandala","Mandala Airlines","Mandarin","Mango","Manta","Manx2","MAP","Martin","Martinair",
-  "MAS Cargo","MASWings","Mauritania","Mauritius","Mavi Gok","Max","Maximus","MEA","Medallion",
+  "JSX","Jubba","Juneyao",
+  
+  # K
+  "Kabo","Kalitta","Kalstar","Kam Air","Karun","Kasai","Katekavia","KayaAirlines","KD Avia","Keewatin","Kelowna","Kenn Borek","Kenya",
+  "Key Lime","Khabarovsk","Khors","Kingfisher","Kish","Kish Air","Klasjet","KLM","Kolavia","Komiaviatrans",
+  
+  c("Korean","Korean Air","Korean Airlines"),
+  
+  "Koryo","Krasavia","Kuban","Kulula","Kunming","Kuwait","Kyrgyzstan Airlines",
+  
+  # L
+  "LAM","LAN","Lanhsa","Lao","Laser",
+  
+  "LATAM",
+  
+  "Lauda Europe",
+  "Laudamotion","LC Busre",
   
   
-  "Mediterranee","MedView","Mel","Meraj","Meridiana","Merpati","Mesa","Mesaba","Mesaba Airlines","Mexicana","Miami","Miat","MIAT","Mid Airlines","Middle East",
-  "Midwest","Miniliner","Mistral","MNG","MNG Airlines","Mocambique Expresso","Modern Logistics","Moldova","Monarch","Montenegro","Morningstar","Moskovia",
-  "Motor Sich","Mount Cook","Murray","Mwant","My Freighter","Myanma","Myanmar","Myanmar National","MyCargo","Naft","Namibia","NAS Air","National","National Jet",
-  "National Jet Systems","Nationwide","Nauru","Naysa","Nelson","Neos","Nepal","Nepal Airlines","Nesma","Network Australia","New Zealand","NewGen","Nextjet","Niki",
-  "Nippon Cargo","Niugini","Nok","NOK","Nolinor","Nordavia","Nordic Regional","Nordica","Nordstar","Nordwind","Norra","NORRA","North","North American","North Cariboo",
-  "Northern Air Cargo","Northern Cargo","Northwest","NorthWest","Northwestern","Norwegian","Norwegian Air Shuttle","Nostrum","Nouvel","Nouvelair","Nova","Novair",
-  "Ocean Air","OceanAir","Okay","OLT","Olympic","Olympic Air","Olympic Airlines","Oman","Oman Air","Omni","Omni Air","One","Onur","Open Skies France","Openskies",
-  "Orange2fly","Orbest","Orenair",
+  "LIAT","Libyan","Libyan Arab","Lift","Link",
   
-  "Orenburg","Orient Thai","Oriental Air Bridge","Oriental Bridge","Overland","Ozjet","Pacific Blue","Pacific Coastal","PAL","Panama","Pantanal","Paramount","Pascan",
-  "Passaredo","Pawa Dominicana","Peace","Peach","Pegas","Pegasus","Pelitta","Pen","Penair","PenAir","Perimeter","Peruvian","PGA","Philippine","Philippine Airlines",
-  "Philippines AirAsia","Phuket Airlines","PIA","Piedmont","Pinnacle","Pionair","Pluna","PNG","Pobeda","Polar","Polet","Porter","Portugalia","Precision","Primera",
-  "Prince Edward Air","Privilege","Provincial","PSA","PSA Airlines","Qantas","Qantaslink","Qatar","Qatar Airways","Qazaq","Qeshm","Quatar Airways","RAF","RAK","RAM",
-  "Red Sea","Red Wings","Regional","Regional 1","Regional CAE","Republic","Republic Airline","Republic Airlines","Rex","REX","Riau","Rimbun","Rossiya","Rouge",
-  "Royal","Royal Air Maroc","Royal Brunei","Royal Jordanian","Rusline","Rutaca","Rwandair","Ryan Int","Ryanair","RyanAir","S7","SA Airlink","SA Express","SAA",
-  "Safair","Safarilink","Saga","Saga Airlines","Saha","Saha Airlines","Salaam","Salam","San Marino","Santa Barbara","Santa SSLH","Saratov","Saratov Airlines",
+  c("Lion","Lionair"),
+  
+  "Livingston","Logan","Loganair",
+  "Longtail","LOT","LTE","LTU",
+  
+  c("Lufthansa",  "LH Cityline"),
+  
+  c("Lux","Luxair"),
+  
+  "Lynx",
+  
+  
+  # M
+  
+  "Madagascar","Magnicharters","Mahan","Malaysia","Malaysian",
+  
+  c("Maldivian","Maldivian Air Taxi"),
+  
+  "Maleth","Malev","Malindo",
+  
+  c("Malmo","Malmo Aviation"),
+  
+  "Malta","Malu",
+
+  c("Mandala","Mandala Airlines"),
+  
+  "Mandarin","Mango","Manta","Manx2","MAP",
+  
+  c("Martin","Martinair"),
+  
+  "MAS Cargo","MASWings","Mauritania","Mauritius","Mavi Gok","Max","Maximus","MEA","Medallion", "Mediterranee","MedView","Mel","Meraj","Meridiana",
+  "Merpati","Mesa",
+  c("Mesaba","Mesaba Airlines"),"Mexicana","Miami",
+  c("Miat","MIAT"),
+  "Mid Airlines","Middle East",
+  "Midwest","Miniliner","Mistral",
+  c("MNG","MNG Airlines"),
+  "Mocambique Expresso","Modern Logistics","Moldova","Monarch","Montenegro","Morningstar","Moskovia",
+  "Motor Sich","Mount Cook","Murray","Mwant","My Freighter",
+  c("Myanma","Myanmar","Myanmar National"),
+  "MyCargo",
+  
+  # N
+  
+  "Naft","Namibia","NAS Air",
+  
+  c("National","National Jet","National Jet Systems"),
+  
+  "Nationwide","Nauru","Naysa","Nelson","Neos",
+  
+  c("Nepal","Nepal Airlines"),
+  
+  "Nesma","Network Australia","NewGen","Nextjet","Niki",
+  
+  "Nippon Cargo",
+  
+  "Niugini",
+  
+  c("Nok","NOK"),
+  
+  "Nolinor","Nordavia","Nordic Regional","Nordica","Nordstar","Nordwind","Norra","NORRA","North American","North Cariboo","Northern Air Cargo","Northern Cargo",
+  
+  c("Northwest","NorthWest"),
+  "Northwestern",
+  
+  c("Norwegian","Norwegian Air Shuttle"),
+  
+  "Nostrum","Nouvel","Nouvelair",
+  
+  c("Nova","Novair"),
+  
+  # O
+  c("Ocean Air","OceanAir"),
+  
+  "Okay","OLT",
+  
+  c("Olympic","Olympic Air","Olympic Airlines"),
+  c("Oman","Oman Air"),
+  
+  c("Omni","Omni Air"),
+  
+  "One","Onur",
+  
+  c("Openskies","Open Skies France"),
+  
+  "Orange2fly","Orbest","Orenair","Orenburg","Orient Thai",
+  
+  c("Oriental Air Bridge","Oriental Bridge"),
+  
+  "Overland","Ozjet","Pacific Blue","Pacific Coastal","PAL","Panama","Pantanal","Paramount","Pascan",
+  "Passaredo","Pawa Dominicana","Peace","Peach","Pegas","Pegasus","Pelitta","Pen","Penair","PenAir","Perimeter","Peruvian","PGA",
+  
+  c("Philippine","Philippine Airlines"),
+  
+  "Philippines AirAsia",
+  
+  "Phuket Airlines",
+  
+  "PIA",
+  
+  "Piedmont","Pinnacle","Pionair","Pluna","PNG","Pobeda","Polar","Polet","Porter","Portugalia","Precision","Primera",
+  "Prince Edward Air","Privilege","Provincial",
+  
+  c("PSA","PSA Airlines"),
+  
+  
+  c("Qantas","Qantaslink"),
+  
+  "Qatar","Qatar Airways",
+  
+  "Qazaq","Qeshm","Quatar Airways","RAF","RAK","RAM",
+  "Red Sea","Red Wings","Regional","Regional 1","Regional CAE",
+  
+  "Republic","Republic Airline","Republic Airlines",
+  
+  "Rex","REX",
+  
+  "Riau","Rimbun","Rossiya","Rouge",
+  "Royal","Royal Air Maroc","Royal Brunei","Royal Jordanian","Rusline","Rutaca","Rwandair","Ryan Int",
+  
+  "Ryanair","RyanAir",
+  
+  "S7",
+  
+  "SA Airlink","SA Express","SAA",
+  
+  "Safair","Safarilink",
+  
+  "Saga","Saga Airlines",
+  "Saha","Saha Airlines",
+  
+  "Salaam","Salam",
+  
+  "San Marino","Santa Barbara","Santa SSLH","Saratov","Saratov Airlines",
   "Saravia",
   
   
-  "SARPA","SAS","Sat","SAT","Sata","SATA","Satena","Saudi","Saudia","Saurya","SBA","Scandinavian","Scat","SCAT","Scoot","Seaborne","SEAir","Senegal","Serbia",
-  "Serene","Serve","Services Air","Severstal","Shaheen","Shan Xi Airlines","Shandong","Shanghai","Shanghai Airlines","Shenzhen","Shree","Shuttle","Shuttle America",
-  "Sial","Siberia Airlines","Sibir","Sichuan","Sichuan Airlines","Silk Way","Silkair","Silver","Silverstone","Sindbard","Singapore","Sita","Skippers",
+  "SARPA",
+  
+  "SAS",
+  
+  "Sat","SAT","Sata","SATA","Satena",
+  
+  "Saudi","Saudia",
+  
+  "Saurya","SBA","Scandinavian","Scat","SCAT","Scoot","Seaborne","SEAir","Senegal","Serbia",
+  "Serene","Serve","Services Air","Severstal","Shaheen","Shan Xi Airlines","Shandong",
+  
+  "Shanghai","Shanghai Airlines",
+  
+  "Shenzhen","Shree",
+  
+  "Shuttle","Shuttle America",
+  
+  "Sial",
+  
+  "Siberia Airlines",
+  
+  "Sibir","Sichuan","Sichuan Airlines","Silk Way","Silkair","Silver","Silverstone","Sindbard",
+  
+  "Singapore",
+  
+  "Sita","Skippers",
   "Skippers Aviation","Sky","SkyBahamas","Skybus","Skyexpress","Skyjet","Skymark","Skynet Asia","Skyservice","Skytrans","SkyUp","Skyward","Skyway Enterprises",
   "Skyways","Skywest","SkyWest","Skywork","Small Planet","Smartlynx","Smartwings","Sol","Solaseed","Solomon","Somon","South African","South Airlines",
-  "South Sudan Supreme","South Supreme","South West Aviation","Southern Air","Southwest","SouthWest","Spanair","Spicejet","SpiceJet","Spirit","Spirit Airlines",
-  "Spring","Spring Airlines","Sprint","Sri Lankan","Srilankan","SriLankan","SriLankan Airlines","Sriwijaya","Sriwijaya Air","Star Air Freight","Star Flyer",
-  "Star Freight","Star Peru","Starbow","Starlux","Stobart","Strategic","Sudan",
+  "South Sudan Supreme","South Supreme","South West Aviation","Southern Air",
+  
+  c("Southwest","SouthWest"),
+  
+  "Spanair",
+  
+  c("Spicejet","SpiceJet"),
+  c("Spirit","Spirit Airlines"),
+  c("Spring","Spring Airlines"),
+
+  "Sprint",
+  
+  c("Sri Lankan","Srilankan","SriLankan","SriLankan Airlines"),
+  c("Sriwijaya","Sriwijaya Air"),
+  c("Star Air Freight","Star Freight"),
+  
+  "Star Flyer","Star Peru","Starbow","Starlux","Stobart","Strategic","Sudan","Sukhoi","Summit","Summit Air","Sun Country","Sun Express","Sunclass","Sundair","Sunday",
+  
+  c("Sunexpress","SunExpress"),
+  
+  "Sunstate","Sunwest","Sunwing",
+  "Suramericanas","Surinam",
+  
+  c("Swift","Swiftair"),
+  
+  "Swiss","Swoop","Syrian Arab","TAAG","Taban","TACA","TACV","Taftan","TAG",
+  
+  c("Tahiti","Tahiti Nui"),
+  
+  "Tailwind","Tajik","TAM","TAME","Tanzania","TAP","Tara","Tara Air",
+  
+  c("Tarco","Tarco Airlines"),
+  
+  "Tarom","TAROM","Tasman Cargo","Tassili","Tatarstan",
+  
+  c("Thai","Thai Airways"),
+  
+  "Thomas Cook",
+  
+  c("Thomson","Thomson Airways","Thomsonfly","ThomsonFly"),
+  
+  c("Turkish","THY"),
+  
+  "Tianjin","Tibet",
+  
+  c("Tiger","Tiger Airways"),
+  
+  "Tindi","Titan","TMA","TNT","Tomsk","Tomskavia","Total","Tracep","Trade","Trans Capital","Trans Maldivian","Trans States","Transaero",
+  
+  c("Transasia","TransAsia"),
+  
+  "Transat","Transavia","Transcarga","Transport International","Transwest","Travel Service","Trigana","TriMG","Trip","TRIP","TSM",
+  
+  c("TUI","TUI Belgium","TUI Nederland","Tuifly","TuiFly","TUIfly","TUIFly"),
+  
+  "Tulpar",
+  c("Tunis","Tunis Air","Tunisair"),
+  
+  "Turkmenistan","Tway","UIA",
+  "Ukraine",
+  
+  c("ULS","ULS Cargo"),
   
   
-  "Sukhoi","Summit","Summit Air","Sun Country","Sun Express","Sunclass","Sundair","Sunday","Sunexpress","SunExpress","Sunstate","Sunwest","Sunwing",
-  "Suramericanas","Surinam","Swift","Swiftair","Swiss","Swoop","Syrian Arab","TAAG","Taban","TACA","TACV","Taftan","TAG","Tahiti","Tahiti Nui",
-  "Tailwind","Tajik","TAM","TAME","Tanzania","TAP","Tara","Tara Air","Tarco","Tarco Airlines","Tarom","TAROM","Tasman Cargo","Tassili","Tatarstan",
-  "Thai","Thai Airways","Thai B773","Thomas Cook","Thomson","Thomson Airways","Thomsonfly","ThomsonFly","THY","Tianjin","Tibet","Tiger","Tiger Airways",
-  "Tindi","Titan","TMA","TNT","Tomsk","Tomskavia","Total","Tracep","Trade","Trans Capital","Trans Maldivian","Trans States","Transaero","Transasia",
-  "TransAsia","Transat","Transavia","Transcarga","Transport International","Transwest","Travel Service","Trigana","TriMG","Trip","TRIP","TSM","TUI",
-  "TUI Belgium","TUI Nederland","Tuifly","TuiFly","TUIfly","TUIFly","Tulpar","Tunis","Tunis Air","Tunisair","Turkish","Turkmenistan","Tway","UIA",
-  "Ukraine","ULS","ULS Cargo",
+  "Ultimate",
+  
+  c("Uni","Uni Airways"),
+  
+  "United",
+  
+  "Up","UPS",
+  
+  c("Ural","Ural Airlines"),"Urga",
+  
+  "US Airways","USA Jet","USA Jet Airlines",
+  
+  c("UTair","UTAir"),
+  "UVT","Uzbekistan",
+  
+  "V Australia","Valuejet","Van","Vanilla","Vanuatu","VARA","Varesh","Venezolana","Veteran","Via","Vietjet","VietJet","Vietnam",
+  "Viking","Vim","VIM",
+  
+  c("Virgin","Virgin Atlantic",),
+  "Vision","Vistara","Viva","VivaAerobus","VivaAeroBus","VivaColombia",
+  
+  c("Vladivostok","Vladivostok Air"),
+  
+  "Vladivostok Avia",
+  
+  "VLM","Voepass","VoePass","Volaris","Volga Dnepr","Volotea","Vostok",
+  
+  "Voyager","Voyageur",
+  
+  "Vueling",
+  
+  "Vulkan","Walter","Wasaya","WDL",
+  "Webjet","West Air","West Atlantic","West Sweden","West Wind","Western Air","Western Global",
+  
+  c("Westjet","WestJet"),
+  
+  "White","Wideroe",
+  
+  c("Wind Jet","Windjet"),
+  
+  c("Wind Rose","Windrose"),
+  ,"Wings","Wisconsin",
+  c("Wizz","Wizz Air","Wizz Ukraine","Wizzair"),
+  
+  "World Airways","World Atlantic","World2Fly","WOW","Xfly",
+  
+  c("Xiamen","Xiamen Airlines"),
+  
+  c("XL Airways","XL France"),
+  "Xtra","Yakutia","Yamal","Yan","Yanair","Yas Air","Yemenia","Yeti",
+  
+  # Z
+  "Zagros",
+  c("Zest","Zest Air"),
+  "Zhejiang Loong",
   
   
-  "Ultimate","Uni","Uni Airways","United","unknown","Up","UPS","Ural","Ural Airlines","Urga","US Airways","USA Jet","USA Jet Airlines","UTair","UTAir",
-  "UVT","Uzbekistan","V Australia","Valuejet","Van","Vanilla","Vanuatu","VARA","Varesh","Venezolana","Veteran","Via","Vietjet","VietJet","Vietnam",
-  "Viking","Vim","VIM","Virgin","Virgin Atlantic","Vision","Vistara","Viva","VivaAerobus","VivaAeroBus","VivaColombia","Vladivostok","Vladivostok Air",
-  "Vladivostok Avia","VLM","Voepass","VoePass","Volaris","Volga Dnepr","Volotea","Vostok","Voyager","Voyageur","Vueling","Vulkan","Walter","Wasaya","WDL",
-  "Webjet","West Air","West Atlantic","West Sweden","West Wind","Western Air","Western Global","Westjet","WestJet","White","Wideroe","Wind Jet","Wind Rose",
-  "Windjet","Windrose","Wings","Wisconsin","Wizz","Wizz Air","Wizz Ukraine","Wizzair","World Airways","World Atlantic","World2Fly","WOW","Xfly","Xiamen",
-  "Xiamen Airlines","XL Airways","XL France","Xtra","Yakutia","Yamal","Yan","Yanair","Yas Air","Yemenia","Yeti","Zagros","Zest","Zest Air","Zhejiang Loong",
-  
-  
-  "Zimbabwe","Zimex","Zoom Airlines","Zoom UK"
+  "Zimbabwe","Zimex",
+  c("Zoom Airlines","Zoom UK")
 )
