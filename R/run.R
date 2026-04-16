@@ -7,6 +7,7 @@ library("httr")
 source("./R/constants.R")
 source("./R/avfuns.R")
 
+options(digits.secs = 0)
 
 ## prep city and airport info for geo assignment
 world_cities=tibble(maps::world.cities) 
@@ -54,17 +55,50 @@ deduped_data=raw_data|>
   filter(reporting_date==min(reporting_date))|>
   ungroup() |> 
   mutate(lwr_orig_text = str_to_lower(orig_text))|> 
+  mutate(lwr_orig_text = trimws(lwr_orig_text)) |> 
   arrange(lwr_orig_text) |> 
   mutate(rn=row_number()) 
 
+deduped_data
+AIRLINES
+airlines_lookup = bind_rows(lapply(AIRLINES, function(z){
+  tibble(data.frame(sterms=z)) |> 
+    mutate(carrier = sterms[1]) |> 
+    mutate(sterms = str_to_lower(sterms))
+}))
+airlines_lookup
 
-# AIRLINES
+
+data_with_airlines_first_join = deduped_data |> 
+  mutate(sterms = gsub(" .*","",lwr_orig_text)) |> 
+  left_join(airlines_lookup)
+
+
+data_with_airlines_second_join = data_with_airlines_first_join |> 
+  filter(is.na(carrier)) |> 
+  select(-carrier) |> 
+  mutate(sterms = sub( "^(\\S+\\s+\\S+).*", "\\1", lwr_orig_text))|> 
+  left_join(airlines_lookup)
+
+
+data_with_airlines_third_join = data_with_airlines_second_join |> 
+  filter(is.na(carrier)) |> 
+  select(-carrier) |> 
+  mutate(sterms = sub( "^(\\S+\\s+\\S+\\s+\\S+).*", "\\1", lwr_orig_text))|> 
+  left_join(airlines_lookup)
+
+data_with_airlines_third_join |> 
+  filter(is.na(carrier)) |> 
+  select(-c(sterms,carrier)) |> 
+  view()
+
+
 # panama occurs both as an airline and as a city airport name.
 
 
 with_airlines_data = 
   bind_rows(
-    lapply(split(deduped_data,deduped_data$rn)[1:100], function(z){
+    lapply(split(deduped_data,deduped_data$rn), function(z){
       
       print(paste(Sys.time(),z$lwr_orig_text[1]))
       bind_rows(
@@ -92,15 +126,15 @@ with_airlines_data
 
 
 # Download the OpenFlights airline database
-# Columns: ID, Name, Alias, IATA, ICAO, Callsign, Country, Active
-url <- "https://raw.githubusercontent.com/jpatokal/openflights/master/data/airlines.dat"
-airlines_full <- read_csv(url, col_names = c("id", "name", "alias", "iata", "icao", "callsign", "country", "active"))
-
-# Filter for relevant columns and clean data
-airlines_clean <- airlines_full %>%
-  filter(!is.na(name)) %>%
-  select(standard_name = name, iata, icao, alias) %>%
-  mutate(across(everything(), as.character))
+# # Columns: ID, Name, Alias, IATA, ICAO, Callsign, Country, Active
+# url <- "https://raw.githubusercontent.com/jpatokal/openflights/master/data/airlines.dat"
+# airlines_full <- read_csv(url, col_names = c("id", "name", "alias", "iata", "icao", "callsign", "country", "active"))
+# 
+# # Filter for relevant columns and clean data
+# airlines_clean <- airlines_full %>%
+#   filter(!is.na(name)) %>%
+#   select(standard_name = name, iata, icao, alias) %>%
+#   mutate(across(everything(), as.character))
 
 
 
