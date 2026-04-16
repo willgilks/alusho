@@ -87,7 +87,14 @@ data_with_airlines_third_join = data_with_airlines_second_join |>
   mutate(sterms = sub( "^(\\S+\\s+\\S+\\s+\\S+).*", "\\1", lwr_orig_text))|> 
   left_join(airlines_lookup)
 
-data_with_airlines_third_join |> 
+
+data_with_airlines_fourth_join = data_with_airlines_third_join |> 
+  filter(is.na(carrier)) |> 
+  select(-carrier) |> 
+  mutate(sterms = sub( "^(\\S+\\s+\\S+\\s+\\S+\\s+\\S+).*", "\\1", lwr_orig_text))|> 
+  left_join(airlines_lookup)
+
+data_with_airlines_fourth_join |> 
   filter(is.na(carrier)) |> 
   select(-c(sterms,carrier)) |> 
   view()

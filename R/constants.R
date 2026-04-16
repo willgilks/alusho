@@ -590,7 +590,8 @@ AIRLINES=list(
   
   c("Air Algerie","Algerie"),"Air Antilles",
   "Air Arabia",
-  c("Air Asia","AirAsia","Asia X","Indonesia Air Asia","Indonesia AirAsia","Indonesia Asia"),
+  c("Air Asia","AirAsia","Asia X","Indonesia Air Asia","Indonesia AirAsia","Indonesia Asia",
+    "Philippines AirAsia"),
   "Air Astana",
   
   c("Air Atlanta","Air Atlanta Icelandic"),
@@ -649,7 +650,7 @@ AIRLINES=list(
   "Air Mauritius","Air Mediterranee",
   "Air Moorea","Air Namibia","Air Nelson",
   
-  c("Air New Zealand","Air NZ"),
+  c("Air New Zealand","Air NZ","New Zealand"),
   
   
   "Air Niugini",
@@ -657,7 +658,7 @@ AIRLINES=list(
   
   "Air Nigeria",
   
-  "Air Nippon","Air Nippon Network",
+  # "Air Nippon","Air Nippon Network",
   "Air Norterra","Air North","Air Nostrum","Air One","Air Pacific",
   
   "Air Service Berlin",
@@ -713,7 +714,7 @@ AIRLINES=list(
   "Alexandria",
   c("Alitalia","Italia"),
   "Alfa Airlines","Aliansa","Alitalia","ALK","Alkan",
-  c("All Nippon","ANA","ANN"),
+  c("All Nippon","ANA","ANN","Nippon Cargo","Air Nippon","Air Nippon Network"),
   "All Ways",
   "All West Freight",
   "Allas",
@@ -977,7 +978,7 @@ AIRLINES=list(
   c("East Air","East"),
   "Eastar","Eastern","Easyfly",
   c("Eastok Avia","Eastok"),
-  "EasyJet","EastSky","EAT","Ecojet","Edelweiss",
+  "EasyJet","EasySky","EastSky","EAT","Ecojet","Edelweiss",
   c("Egypt Air","Egypt","Egyptair","EgyptAir"),
   "Egypt Express",
   c("El Al","Elal"),
@@ -995,44 +996,35 @@ AIRLINES=list(
   "European Air Transport",
   "Eurowings",
   c("Eva","EVA"),
-  "Evergreen","Everjet","Everts","Exin","Exploits Valley","Express",
+  "Evergreen","Everjet","Everts","Exin","Exploits Valley",
+  c("Express Airways","Express"),
+  "Exploit Valley",
   c("Expressjet","ExpressJet"),
   "EZ",
   
-  "Fair Aviation",
-  "Falcon Air Express",
-  "Falcon",
-  "Far Eastern","Farnair",
+  # F
+  "Fair Aviation","Falcon Air Express","Falcon","Far Eastern","Farnair",
   c("Fastjet","Fast Congo"),
   "FAT","Favori",
   c("Federal Express","FedEx"),
-  "Feeder",
-  "Felix Airways",
-  "Field",
-  "Fiji",
-  "Field",
-  "Filair",
+  "Feeder","Felix Airways","Field","Fiji","Field","Filair",
   "Finnair","Finncomm","Firefly","First","Flair","Flamenco","Flash Air",
   "Fleet","Flightline","Flugfelag",
-  "Fly Africa",
-  "Fly540",
-  "Fly 365",
-  "Fly Air41",
-  "Fly Jamaica",
-  "Fly Jordan",
+  "Fly Africa","Fly540","Fly 365","Fly Air41","Fly Jamaica","Fly Jordan",
   "Fly One","Fly2Sky","Flyant","FlyArystan","Flybaboo","Flydamas","Flyme","Flymna",
   c("Flybe","FlyBe","FlyBE"),
   "Flybondi","Flydubai","FlyDubai",
   c("Flyegypt","FlyEgypt"),
   "FlyGeorgia","Flyglobespan",
   c("Flynas","FlyNAS"),
-  "Flysafair","Four Star Cargo","Freedom",
+  "Flysafair","Four Star Cargo",
+  "Freebird","Freedom","Freeflight",
   "Freight Runners",
   "French Bee","Frontier","Fuji Dream",
   "Futura","Fuzhou",
   
   ## G
-  "Galapagous",
+  c("Galapagos","Galapagous"),
   "Garuda",
   c("Gazprom","Gazpromavia"),
   "GB",
@@ -1050,87 +1042,53 @@ AIRLINES=list(
   c("Gol","GOL"),
   c("Golden","Golden Air"),
   c("Goma","Gomair"),
-"GR-Avia",
-"Grand Cru",
+"GR-Avia","Grand Cru",
 c("Great Lakes","Great Business Lakes"),
 c("Great Wall","Great Wall Airlines"),
-"Green Africa",
-"Greenland",
-"Grodo",
+"Green Africa","Greenland","Grodo",
   c("Grozny Avia","Grozny","Groznyavia"),
-"Guanghui",
-  "Guicango",
+"Guanghui","Guicango",
   c("Gulf","Gulf Air"),
 
 # H
-c("Hapag Fly","Hapag Llyod"),
+c("Hapag-Lloyd Flug","Hapag Fly","Hapag Llyod","Hapag Lloyd"),
   c("Hainan","Hainan Airlines"),
 "Halla",
 c("Hamburg","Hamburg International"),
 "Hawaiian",
 c("Hawkair","Hawk"),
-"Hebei",
-"Helios Airways",
-"Hello",
-"Helvetic","Hemus","Henan Airlines","Hermes",
-"Heston",
+"Hebei","Helios Airways","Hello","Helvetic","Hemus","Henan Airlines","Hermes","Heston",
   c("Hevilift","Hevilift PNG"),
-"Hewa Bora",
-"Hi Air",
-"Hifly","HiFly",
-"HiSky",
-"HK Express","Hokkaido","Hola Airlines",
+"Hewa Bora","Hi Air","Hifly","HiFly","HiSky","HK Express","Hokkaido","Hola Airlines",
   c("Hongkong Airlines","Hong Kong"),
   c("Hop","HOP","Hop!"),
   c("Horizon","Horizon Air","Horizont"),
 "Hunnu","Hydro-Quebec",
-  "iAero","IBC","Iberia","Iberworld","Ibex","Ibom","ICAR",
-  
+
+# I
+"iAero","IBC","Iberia","Iberworld","Ibex","Ibom","ICAR","Icaro",
   c("Icelandair","Iceland","ICE","Icelandic"),
-  "ICON",
-  "IFL",
-  
+  "ICON","IFL",
   c("iFly","IFly","I-Fly"),
-  
   "Ikar","Imperial Air Cargo","Incheon",
 c("Indigo","IndiGo"),
-"Indus",
-"Innu Mikun",
-"Insel",
-"Inter Iles",
+"Indus","Innu Mikun","Insel","Inter Iles",
 c("InterCaribbean","Intercaribbean"),
-"Interjet",
-"Interlink",
-"Intersky","Inuit","IrAero",
-  "Iran","Iran Airtours",
-  "Iraqi","IRS",
-"ISD",
-"Island Air Transport",
-"Island",
-"Islena Airlines","Israir","ITA",
+"Interjet","Interlink","Intersky","Inuit","IrAero","Iran","Iran Airtours","Iraqi","IRS",
+"ISD","Island Air Transport","Island","Islena Airlines","Israir","ITA",
   
   c("Itali Airlines","ItAli Airlines"),
-  
   "Itapemirim","Itek Air","Izhavia","Izmir Airlines","JAC","Jade Cargo","JAL","Jambo",
 c("Japan Airlines","Japan","J-Air"),
 c("JAT Airways","JAT"),
-"Jayawijaya",
-  "Jazeera","Jazz","Jeju","Jet Airways","Jet Time","Jet Time Finland",
+"Jayawijaya","Jazeera","Jazz","Jeju","Jet Airways","Jet Time","Jet Time Finland",
   
   c("jet2","Jet2"),
-  
   c("Jet4You","Jetairfly"),
-  
   c("Jetblue","Jeblue"),
-  
   c("Jet Connect","Jetconnect"),
-"Jetgo","JetKonnect","Jetlink",
-  "Jetlite",
-"Jet One Express",
-"Jet2.com",
-"Jetair",
-"Jetsmart","Jetstar",
-"Jett8","Jettime","Jetways","JetX","Jiangxi","Jin","Jinnah","Jonika","Joon","Jordan","Jota",
+"Jetgo","JetKonnect","Jetlink","Jetlite","Jet One Express","Jet2.com","Jetair",
+"Jetsmart","Jetstar","Jett8","Jettime","Jetways","JetX","Jiangxi","Jin","Jinnah","Jonika","Joon","Jordan","Jota",
 c("JoyAir","Joy"),
 "JS Air","JSX","Ju-Air",
 c("Juba Air Cargo","Juba"),
@@ -1138,20 +1096,13 @@ c("Juba Air Cargo","Juba"),
   
   # K
   c("K-Mile Asia","K-MILE"),
-  "Kabo","Kalitta","Kalstar","Kam Air","Kapo","Kargo Express","Karun","Kasai","Katekavia","KayaAirlines",
-"Kaz Trans","Kazan",
-"KBZ","KD Avia","Keewatin","Kelowna","Kenn Borek","Kenya",
-  "Key Lime","Kestrel",
-"Khabarovsk","Khors",
-"Kin Avia","Kingfisher","Kirov Air","Kish","Kish Air",
-"Klasjet","KLM",
+  "Kabo","Kalitta","Kalstar","Kam Air","Kapo","Kargo Express","Karthago","Karun","Kasai","Katekavia","KayaAirlines",
+"Kaz Trans","Kazan","KBZ","KD Avia","Keewatin","Kelowna","Kenn Borek","Kenya",
+  "Key Lime","Kestrel","Khabarovsk","Khors","Kin Avia","Kingfisher","Kirov Air","Kish","Kish Air","Klasjet","KLM",
 c("KMV Avia","KMV"),
-"Kolavia","Komiaviatrans",
-"Koral Blue",
+"Kolavia","Komiaviatrans","Koral Blue",
   c("Korean","Korean Air","Korean Airlines"),
-  
-  "Koryo",
-"Kosmos",
+  "Koryo","Kosmos",
 c("Krasavia","Krasair"),
 "Kuban",
 c("Kulula","Kulula.com"),
@@ -1160,74 +1111,47 @@ c("Kyrgyzstan Airlines","Kyrgyzstan","Kyrgyz"),
   
   # L
   
-  "LACSA","LAM","LAMINA","LAN",
+  "LACSA","LAM",
+c("LaMia Airlines","LAMINA","LAMIA Bolivia"),
+"LAN",
 c("Lanco","LANCO"),
 "Lanhsa","Lao","Laser",
 c("Lineas Aereas Suramericanas","LAS"),
   "LATAM",
 c("Lauda Air","LaudaAir","Lauda","Lauda Europe","Laudamotion"),
 "LC Busre",
-
 c("Latin American Wings","LAW"),
-  
-"LC Peru",
-"LeAir","Lease Fly","Leisure Egypt","Level",
-
-
+  "LC Peru","LeAir","Lease Fly","Leisure Egypt","Level",
 c("Luftfahrtgesellschaft Walter","LG Walter","LGW"),
-  
-  c("LIAT","LIAT20"),
-
+c("LIAT","LIAT20"),
 c("Libyan","Libya"),
-"Libyan Arab",
-
-"Lift","Link",
-  
+"Libyan Arab","Lift","Link",
   c("Lion","Lionair"),
   "Linea Aerea Puertorriquena",
-
 c("Links Air","Links","Linksair"),
-
-  "Livingston",
-c("Llyod Aero","Llyod Aereo"),
-c("Logain Air","Logan","Loganair"),
-"London Executive",
-  "Longtail","LOT",
-"Lotus Air","LTE","LTU",
-  "Lucky",
-  c("Lufthansa","Lufthansa Cityline","LH Cityline"),
-  "Lufttransport",
-"Lulutai",
+"Livingston",
+c("Lloyd Aereo","Llyod Aero","Llyod Aereo"),
+c("Logan Air","Logain Air","Logan","Loganair"),
+"London Executive","Longtail","LOT","Lotus Air","LTE","LTU","Lucky",
+  c("Lufthansa","Lufthansa Cityline","Lufthana Cityline","LH Cityline"),
+  "Lufttransport","Lulutai",
   c("Lux","Luxair"),
-  "Luxwing",
-"Lynden",
-  "Lynx",
+  "Luxwing","Lynden","Lynx",
   
   
   # M
-  "MacAir","Macau","Maersk",
-  "Magnicharters","Mahan","Malaysia","Malaysian",
-  
+  "MacAir","Macau","Maersk","Magnicharters","Mahan","MAIS","Malaysia","Malaysian",
   c("Maldivian","Maldivian Air Taxi"),
-  
   "Maleth","Malev","Malindo",
-  
   c("Malmo Aviation","Malmo","Malmoe","Malmo Aviation","Malmoe Aviation"),
-  
   "Malta","Malu",
-
   c("Mandala","Mandala Airlines"),
-  
-  "Mandarin","Mango","Manta","Manaus Aerotaxi",
-"Mandalay","Manx",c("Manx2.com","Manx2"),
+  "Mandarin","Mango","Manta","Manaus Aerotaxi","Mandalay","Manx",c("Manx2.com","Manx2"),
 c("MapJet","MAP"),
 c("Marabu","Marabu/Nordica"),
 "Marathon",
   c("Martinair","Martin"),
-"Mars",
-  
-  "MAS Cargo","MASWings","Mauritania","Mauritius","Mavi Gok","Max","Maximus",
-"MEA",
+"Mars","MAS Cargo","MASWings","Mauritania","Mauritius","Mavi Gok","Max","Maximus","MEA",
 c("MedView","Med-View"),
 "Medallion", "Medavia",
 c("Mediterranean","Mediterranee"),
@@ -1235,9 +1159,7 @@ c("Mediterranean","Mediterranee"),
 c("Meridian","Meridiana"),
   "Merpati","Mesa",
   c("Mesaba","Mesaba Airlines"),
-"Metrojet",
-"Mexicana",
-"MHS","Miami",
+"Metrojet","Mexicana","MHS","Miami",
 c("Miat","MIAT"),
 c("Mid Airlines","MidAirlines"),
 c("Middle East","Mid East"),
@@ -1245,118 +1167,144 @@ c("Middle East","Mid East"),
   c("MNG","MNG Airlines"),
   "Mocambique Expresso","Modern Logistics",
 c("Moldavian","Moldova"),
-"Mombasa Air Safari",
-"Monarch","Mongolia","Mont Gabaon","Montenegro","Montserrat","Mordovia",
+"Mombasa Air Safari","Monarch","Mongolia","Mont Gabaon","Montenegro","Montserrat","Mordovia",
 c("Morning Star","Morningstar"),
 "Moskovia",
 c("Motor-Sich","Motor Sich"),
 "Mount Cook","Murray","Mwant",
-"My Indo",
-"My Freighter",
-"My Travel",
-"MyAir",
-"MyCargo",
-"MyWay",
+"My Indo","My Freighter","My Travel","MyAir","MyCargo","MyWay",
 c("Myanma","Myanmar","Myanmar National"),
   
   # N
   
-  "Naft","Namibia","NAS Air",
-  
-  c("National","National Jet","National Jet Systems"),
-  
-  "Nationwide","Nauru","Naysa","Nelson","Neos",
-  
+"NAC","Naft",
+c("NAM Air","NAM"), "Namibia","NAS Air",
+c("FlyNAS","NAS"),
+c("National Test Pilot School","NTPS"),
+c("National Jet Systems","National Jet"),
+"Nationale","Nationwide","Nauru","Naysa","Nelson","Neos",
   c("Nepal","Nepal Airlines"),
-  
-  "Nesma","Network Australia","NewGen","Nextjet","Niki",
-  
-  "Nippon Cargo",
-  
-  "Niugini",
-  
+  "Nesma",
+c("Network Aviation","Network Australia","Network"),
+"NewGen","Nextjet","Niki","Nile","Nimbus","Niugini","NOAR",
   c("Nok","NOK"),
+  "Nolinor","Nomad","Nordavia",
+c("Nordic","Nordic Regional"),
+"Nordica","Nordstar","Nordwind","Norra","NORRA",
+c("Norse Atlantic","Norse Atlantic Airways"),
+"North American","North Cariboo","Northern Air Cargo","Northern Cargo",
   
-  "Nolinor","Nordavia","Nordic Regional","Nordica","Nordstar","Nordwind","Norra","NORRA","North American","North Cariboo","Northern Air Cargo","Northern Cargo",
-  
+c("Air North","North"),
+"North Flying","North Star",
   c("Northwest","NorthWest"),
   "Northwestern",
-  
   c("Norwegian","Norwegian Air Shuttle"),
-  
-  "Nostrum","Nouvel","Nouvelair",
-  
-  c("Nova","Novair"),
+"Nostrum",
+c("Nouvelair","Nouvel"),
+"Nouvelle Gabon","Nusantara",
+c("NyxAir","Nyx"),
+c("Nova","Novair"),
   
   # O
   c("Ocean Air","OceanAir"),
-  
+c("Off We Go","OWG"),
   "Okay","OLT",
-  
   c("Olympic","Olympic Air","Olympic Airlines"),
+"Olympus",
   c("Oman","Oman Air"),
-  
   c("Omni","Omni Air"),
-  
   "One","Onur",
-  
-  c("Openskies","Open Skies France"),
-  
-  "Orange2fly","Orbest","Orenair","Orenburg","Orient Thai",
-  
+  c("Open Skies","Openskies","Open Skies France"),
+  "Orange2fly","Orbest",
+c("Orenair","Oren"),
+"Orenburzhye",
+"Orient Thai",
   c("Oriental Air Bridge","Oriental Bridge"),
-  
-  "Overland","Ozjet","Pacific Blue","Pacific Coastal","PAL","Panama","Pantanal","Paramount","Pascan",
-  "Passaredo","Pawa Dominicana","Peace","Peach","Pegas","Pegasus","Pelitta","Pen","Penair","PenAir","Perimeter","Peruvian","PGA",
-  
-  c("Philippine","Philippine Airlines"),
-  
-  "Philippines AirAsia",
-  
-  "Phuket Airlines",
-  
-  "PIA",
-  
-  "Piedmont","Pinnacle","Pionair","Pluna","PNG","Pobeda","Polar","Polet","Porter","Portugalia","Precision","Primera",
-  "Prince Edward Air","Privilege","Provincial",
-  
-  c("PSA","PSA Airlines"),
-  
-  
-  c("Qantas","Qantaslink"),
-  
+  "Overland","Ozjet",
+"Pacific Aircorp",
+"Pacific Blue","Pacific Coastal","Pacific Sun","PAK West",
+c("Pakistan International","PIA","Pakistan International Airlines"),
+"Panama","Pantanal","Paramount","Pascan","Passaredo","Pawa Dominicana","Peace","Peach",
+"Pegas","Pegasus","Pelitta","Pen","Penair","PenAir","Perimeter","Peruvian","PGA",
+c("Philippine Airlines","Philippine","PAL","Philippines"),
+c("Phuket Airlines","Phuket","Phuket Air"),
+"PalmAir",
+c("Pamir Airways","Pamir"),
+c("PAN","Pan"),
+c("Pel Air","Pel"),
+c("Pelita Air","Pelita"),
+c("People's Viennaline","People's"),
+"Petro","Petropavlovsk-Kamchatsky","Piedmont","Pinnacle","Pionair","Pioneer Regional",
+"Play","Pluna","Plus Ultra","PNG","Pobeda","Polar",
+"Polet","Polish Air Force","Polynesia Blue","Porter","Portugalia","Pouya","Pratt&Whitney","Precision","Presidential","Primera",
+c("Prince Edward Air","Prince Edward"),
+"PrivatAir","Private Wings","Privilege","Proflight Zambia","Progress TsSKB","Provincial","Protocole",
+c("PSA","PSA Airlines"),
+c("Pskovavia","Pskov"),
+"Pullmantur","PVL",
+
+# Q
+"Qanot",
+  c("Qantas","Qantaslink","Qantas'"),
   c("Qatar Airways","Qatar","Quatar Airways"),
+  "Qazaq",
+c("Qeshm","Queshm"),
+
+# R
+"R'Komor",
+"Rada",
+"RAF",
+c("RAF-Avia","RafAvia"),
+"RAK","RAM",
+"Rano",
+"Red Air",
+  "Red Sea","Red Wings","Regent","Regional","Regional 1","Regional CAE",
   
-  "Qazaq","Qeshm","RAF","RAK","RAM",
-  "Red Sea","Red Wings","Regional","Regional 1","Regional CAE",
-  
+"Renegade",
   c("Republic","Republic Airline","Republic Airlines"),
   
   c("Rex","REX"),
   
-  "Riau","Rimbun","Rossiya","Rouge",
-  "Royal","Royal Air Maroc","Royal Brunei","Royal Jordanian","Rusline","Rutaca","Rwandair","Ryan Int",
+  "Riau","Rico Linhas","Rimbun","Rio Cargo","Rio Linhas","Romavia","Rossiya","Rotana","Rovos Rail",
+"Rouge","Royal",
+c("Royal Air Maroc","RAM"),
+"Royal Brunei","Royal Jordanian","Rudufu","Ruili","Rusair","Rusline","Rutaca",
+c("Rwandair","Rwanda"),
+"Ryan Int",
+"Ryan Services",
   
-  c("Ryanair","RyanAir"),
+  c("Ryanair","RyanAir","Ryan"),
   
-  "S7",
+# S
+  c("S7","Siberia Airlines","Siberia"),
+"Sabang Merauke Raya",
   
   
-  
+"Saeta",
   "Safair","Safarilink",
+
+c("Safari Express Cargo","Safari Express","Safari"),
   
+"Safe","Safi",
+
   c("Saga","Saga Airlines"),
   c("Saha","Saha Airlines"),
   
+"Sakhalinsk",
   c("Salaam","Salam"),
   
+"Sales & Services",
+"Sam","Samair","Sanga","Santa",
+
   "San Marino","Santa Barbara","Santa SSLH",
+"SARAT",
   
   c("Saratov","Saratov Airlines"),
   
   "Saravia","SARPA",
   
   c("SAS","Scandinavian"),
+"Sasca",
   
   c("Sat","SAT"),
   c("Sata","SATA"),
@@ -1365,10 +1313,13 @@ c("Myanma","Myanmar","Myanmar National"),
   
   c("Saudi","Saudia"),
   
-  "Saurya","SBA","Scat","SCAT","Scoot","Seaborne","SEAir","Senegal","Serbia",
-  "Serene","Serve","Services Air","Severstal","Shaheen","Shan Xi Airlines","Shandong",
+  "Saurya","SBA","Scat","SCAT","Scoot",
+c("Scot Airways","Scot"),
+"Seaborne","SEAir","Senegal","Seoul","Sepahan","Serbia",
+  "Serene","Serve","Services Air","Severstal","Seychelles","Shaheen","Shan Xi Airlines","Shandong",
   
   c("Shanghai","Shanghai Airlines"),
+"Shovkoviy",
   
   "Shenzhen","Shree",
   
@@ -1376,25 +1327,34 @@ c("Myanma","Myanmar","Myanmar National"),
   
   "Sial",
   
-  "Siberia Airlines",
   
   "Sibir",
   
   c("Sichuan","Sichuan Airlines"),
-  
-  "Silk Way","Silkair","Silver","Silverstone","Sindbard",
+"SILA",
+c("Silk Way","Silkway West"),
+c("Silkair","Silk"),
+"Silver","Silverjet","Silverstone","Simrik","Sindbard",
   
   "Singapore",
-  
-  "Sita","Skippers",
-  "Skippers Aviation","Sky","SkyBahamas","Skybus","Skyexpress","Skyjet","Skymark","Skynet Asia","Skyservice","Skytrans","SkyUp","Skyward","Skyway Enterprises",
+  "Sirius",
+  "Sita","SJL",
+c("Skippers Aviation","Skippers"),
+"Sky",
+"Skyairlines",
+"SkyAirWorld",
+"SkyBahamas","Skybus","Skyexpress","Skygreece","Skyhigh","Skyjet","SkyKing",
+c("SkyLease","SkyLease Cargo"),
+"Skyline",
+"Skymark","Skynet Asia","Skyservice","Skytraders","Skytrans","SkyUp","Skyward","Skyway Enterprises",
+"Skyworks",
   "Skyways",
   
   c("Skywest","SkyWest"),
   
   "Skywork","Small Planet","Smartlynx","Smartwings","Sol","Solaseed","Solomon","Somon",
   
-  c("South African","SAA","SA Airlink","SA Express"), 
+  c("South African","SAA","SA Airlink","SA Express","SAX"), 
   
   "South Airlines",
   "South Sudan Supreme","South Supreme","South West Aviation","Southern Air",
@@ -1474,10 +1434,8 @@ c("Myanma","Myanmar","Myanmar National"),
   
   "Up","UPS",
   
-  c("Ural","Ural Airlines"),"Urga",
-  
-  "US Airways",
-  
+  c("Ural","Ural Airlines"),
+  "Urga","US Airways","USAF",
   c("USA Jet","USA Jet Airlines"),
   
   c("UTair","UTAir"),
@@ -1515,7 +1473,7 @@ c("Myanma","Myanmar","Myanmar National"),
   
   c("Wind Rose","Windrose"),
   "Wings","Wisconsin",
-  c("Wizz","Wizz Air","Wizz Ukraine","Wizzair"),
+  c("Wizz Air","Wizz","Wizz Ukraine","Wizzair"),
   
   "World Airways","World Atlantic","World2Fly","WOW","Xfly",
   
