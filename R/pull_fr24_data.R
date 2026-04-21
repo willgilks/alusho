@@ -224,18 +224,25 @@ SQUAWK_LOOKUP |>
 
 
 
+
+
 # Install from GitHub
-devtools::install_github("luisgasco/openskyr")
+# devtools::install_github("luisgasco/openskyr")
+pak::pak("luisgasco/openskyr")
 renv::snapshot()
 library(openskyr)
 
 # Retrieve states for a specific Unix timestamp (requires authentication)
-historical_states <- get_state_vectors(
-  username = "your_username", 
-  password = "your_password", 
-  time = 1713715200  # Replace with your desired timestamp
-)
+historical_states <- tibble(data.frame(get_state_vectors(
+)))
 
+
+as_datetime(1776783910)
+
+
+usethis::edit_r_environ()
+
+state_vectors_df <- get_state_vectors(username="your_username",password="your_password")
 
 
 # Run #
