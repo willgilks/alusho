@@ -5,7 +5,7 @@ library("tidyverse")
 library("httr")
 
 source("./R/constants.R")
-source("./R/avfuns.R")
+source("./R/av_funs.R")
 
 options(digits.secs = 0)
 
